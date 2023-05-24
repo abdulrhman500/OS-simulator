@@ -55,11 +55,14 @@ public class Memory {
         memory[address] = word;
     }
 
-    // public void loadProcess(Process process) {
-    //     if ()
+    // public void createProcess(Process process) {
+    //     int storeAddress = hasContiguousBlocksOfSize(process.size);
+    //     if (storeAddress == -1) {
+    //         unloadProcess();
+    //     }
     // }
 
-    public boolean hasContiguousBlocksOfSize(int requiredWordsCount) {
+    public int hasContiguousBlocksOfSize(int requiredWordsCount) {
         for (int i = 0; i < allocationTable.length; i++) {
             if (!allocationTable[i]) {
                 boolean contiguousBlocks = true;
@@ -70,11 +73,11 @@ public class Memory {
                     }
                 }
                 if (contiguousBlocks) {
-                    return true;
+                    return i;
                 }
             }
         }
-        return false;
+        return -1;
     }
 
     public int[] getMemory() {
