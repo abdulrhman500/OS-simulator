@@ -1,6 +1,6 @@
 package exceptions;
 
-public class IllegalMemoryAccessException extends Exception {
+public class IllegalMemoryAccessException extends OperatingSystemException {
     public IllegalMemoryAccessException() {
         super("Illegal Action");
     }
