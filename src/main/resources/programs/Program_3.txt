@@ -1,5 +1,8 @@
 semWait userInput
+semWait userOutput
+print Please enter a value
 assign a input
+semSignal userOutput
 semSignal userInput
 semWait file
 assign b readFile a
