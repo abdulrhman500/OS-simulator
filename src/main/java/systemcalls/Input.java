@@ -8,11 +8,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.Scanner;
 
-public class Input implements SystemCalls {
-
-    public void execute() {
-
-    }
+public class Input {
 
     public String readFile(String filePath) throws FileNotFoundException {
         Scanner sc = new Scanner(new FileReader(new File(filePath)));

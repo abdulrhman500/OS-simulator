@@ -6,11 +6,8 @@ import memory.Memory;
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
-public class Output implements SystemCalls {
+public class Output {
 
-    public void execute() {
-
-    }
 
     public void writeFile(String filePath, String text) throws FileNotFoundException {
         PrintWriter pw = new PrintWriter(filePath);
