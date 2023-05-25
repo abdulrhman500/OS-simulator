@@ -16,17 +16,22 @@ public class Memory {
 
     public int searchForWord(String wantedName) {
         for (int i = 0; i < memory.length; i++) {
-            if (memory[i].name == wantedName)
+            if (memory[i].name.equals(wantedName))
                 return i;
         }
         return -1;
     }
 
-    public Object loadWord(int address) throws IllegalMemoryAccessException {
+    public Object getValueAt(int address) throws IllegalMemoryAccessException {
         return memory[address].value;
     }
 
-    public void storeWord(int address, Object newValue) throws IllegalMemoryAccessException {
+    public MemoryWord loadWord(int address) {
+        return memory[address];
+    }
+
+    public void storeWord(int address, String newName, Object newValue) throws IllegalMemoryAccessException {
+        memory[address].name = newName;
         memory[address].value = newValue;
     }
 
