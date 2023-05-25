@@ -1,12 +1,12 @@
 package memory;
 
+import Main.Constants;
 import exceptions.IllegalMemoryAccessException;
 
 public class Memory {
     private MemoryWord[] memory;
 
     private static Memory instance = new Memory();
-    private static int PROCESS_SPACE = 3;
 
     private Memory() {
         memory = new MemoryWord[40];
@@ -24,7 +24,7 @@ public class Memory {
         return -1;
     }
 
-    public Object getValueAt(int address) throws IllegalMemoryAccessException {
+    public Object getValueAt(int address){
         return memory[address].getValue();
     }
 
@@ -32,7 +32,7 @@ public class Memory {
         return memory[address];
     }
 
-    public void storeWord(int address, String newName, Object newValue) throws IllegalMemoryAccessException {
+    public void storeWord(int address, String newName, Object newValue) {
         memory[address] = new MemoryWord(newName, newValue);
     }
 
@@ -40,11 +40,19 @@ public class Memory {
         memory[address] = null;
     }
 
-    public int hasContiguousBlocksOfSize(int requiredWordsCount) {
+    public int getLowerBound(){
+        int lowerBound = hasContiguousBlocks();
+        if (lowerBound != -1) {
+            //TODO save a process to disk and call this method again
+        }
+        return lowerBound;
+    }
+
+    private int hasContiguousBlocks() {
         for (int i = 0; i < memory.length; i++) {
             if (memory[i] == null || memory[i].getValue() == null) {
                 boolean contiguousBlocks = true;
-                for (int j = i + 1; j < i + requiredWordsCount && j < memory.length; j++) {
+                for (int j = i + 1; j < i + Constants.PROCESS_SPACE && j < memory.length; j++) {
                     if (memory[j].getValue() != null) {
                         contiguousBlocks = false;
                         break;
