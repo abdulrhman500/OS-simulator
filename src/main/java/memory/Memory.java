@@ -51,6 +51,7 @@ public class Memory {
     }
 
     private int hasContiguousBlocks() {
+        //TODO refactor this
         for (int i = 0; i < memory.length; i++) {
             if (memory[i] == null || memory[i].getValue() == null) {
                 boolean contiguousBlocks = true;

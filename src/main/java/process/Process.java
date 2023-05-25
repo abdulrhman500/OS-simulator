@@ -26,25 +26,28 @@ public class Process {
 
 
 
-        this.loadFiveInstructions(lowerBound+7,0);
+        this.loadInstructions(lowerBound+7,0);
 
         this.state=State.Ready;
     }
 
-    private void loadFiveInstructions(int startMemAdress,int line) {
-        //TODO change this to a generic number of instructions to reach the case of storing a process to disk
+    private void loadInstructions(int startMemAddress, int line) {
         try{
             File myObj = new File("src/main/resources/programs/"+ this.getCodeLocation());
             Scanner reader = new Scanner(myObj);
+
+            //skipping already loaded instructions
             for(int i=0;i<line;i++){
                 reader.nextLine();
             }
-            mem.storeWord(startMemAdress,"I1",reader.nextLine());
-            mem.storeWord(startMemAdress+1,"I2",reader.nextLine());
-            mem.storeWord(startMemAdress+2,"I3",reader.nextLine());
-            mem.storeWord(startMemAdress+3,"I4",reader.nextLine());
-            mem.storeWord(startMemAdress+4,"I5",reader.nextLine());
 
+            for(int i=0;i<Constants.NUMBER_OF_INSTRUCTIONS;i++){
+                mem.storeWord(startMemAddress+i,"I"+i,reader.nextLine());
+                if(!reader.hasNextLine()){
+                    mem.storeWord(startMemAddress+i+1,"Halt","");
+                    break;
+                }
+            }
             reader.close();
         }catch (Exception ignored){}
     }
