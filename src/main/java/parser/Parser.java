@@ -18,7 +18,7 @@ public class Parser {
     }
 
     private static void parseLine(String data) {
-        Process p =new Process();
+//        Process p =new Process();
         String[] arr = data.split(" ");
         switch (arr[0]){
             case "semWait" -> System.out.println("semWait " + arr[1]); // TODO actually call semWait and SemSignal and check for resource in enum

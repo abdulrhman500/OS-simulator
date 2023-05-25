@@ -25,4 +25,8 @@ public class MemoryWord {
         this.value = value;
     }
 
+    @Override
+    public String toString() {
+        return "name= " + name + " | " +", value= " + value;
+    }
 }

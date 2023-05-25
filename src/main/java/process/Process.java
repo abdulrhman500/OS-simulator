@@ -3,6 +3,9 @@ package process;
 import Main.Constants;
 import memory.Memory;
 
+import java.io.File;
+import java.util.Scanner;
+
 public class Process {
     int lowerBound;
     Memory mem = Memory.getInstance();
@@ -29,10 +32,36 @@ public class Process {
     }
 
     private void loadFiveInstructions(int startMemAdress,int line) {
-        //TODO load 5 instructions from file
+        //TODO change this to a generic number of instructions to reach the case of storing a process to disk
+        try{
+            File myObj = new File("src/main/resources/programs/"+ this.getCodeLocation());
+            Scanner reader = new Scanner(myObj);
+            for(int i=0;i<line;i++){
+                reader.nextLine();
+            }
+            mem.storeWord(startMemAdress,"I1",reader.nextLine());
+            mem.storeWord(startMemAdress+1,"I2",reader.nextLine());
+            mem.storeWord(startMemAdress+2,"I3",reader.nextLine());
+            mem.storeWord(startMemAdress+3,"I4",reader.nextLine());
+            mem.storeWord(startMemAdress+4,"I5",reader.nextLine());
+
+            reader.close();
+        }catch (Exception ignored){}
     }
 
     public int getId() {
         return (int) mem.getValueAt(this.lowerBound);
+    }
+
+    private String getCodeLocation(){
+        int id =this.getId();
+        if(id ==1){
+            return Constants.PROGRAM_1_CODE;
+        }
+        if(id ==2){
+            return Constants.PROGRAM_2_CODE;
+        }
+        return Constants.PROGRAM_3_CODE;
+
     }
 }

@@ -3,6 +3,8 @@ package memory;
 import Main.Constants;
 import exceptions.IllegalMemoryAccessException;
 
+import java.util.Arrays;
+
 public class Memory {
     private MemoryWord[] memory;
 
@@ -68,5 +70,14 @@ public class Memory {
 
     public MemoryWord[] getMemory() {
         return this.memory;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb =new StringBuilder();
+        for(int i=0;i<40;i++){
+            sb.append(i).append(" ").append(memory[i].toString()).append("\n");
+        }
+        return sb.toString();
     }
 }

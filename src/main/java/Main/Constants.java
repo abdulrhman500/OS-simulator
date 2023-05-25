@@ -3,7 +3,7 @@ package Main;
 public class Constants {
 
     public static final String PROGRAM_PATH = "src/main/resources/programs";
-    public static int PROCESS_COUNT = 0;
+    public static int PROCESS_COUNT = 1;
 
     public static final int PROCESS_SPACE = 12;
 
