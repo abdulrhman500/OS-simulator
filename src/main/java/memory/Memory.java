@@ -18,14 +18,14 @@ public class Memory {
 
     public int searchForWord(String wantedName) {
         for (int i = 0; i < memory.length; i++) {
-            if (memory[i].name.equals(wantedName))
+            if (memory[i].getName().equals(wantedName))
                 return i;
         }
         return -1;
     }
 
     public Object getValueAt(int address) throws IllegalMemoryAccessException {
-        return memory[address].value;
+        return memory[address].getValue();
     }
 
     public MemoryWord loadWord(int address) {
@@ -42,10 +42,10 @@ public class Memory {
 
     public int hasContiguousBlocksOfSize(int requiredWordsCount) {
         for (int i = 0; i < memory.length; i++) {
-            if (memory[i] == null || memory[i].value == null) {
+            if (memory[i] == null || memory[i].getValue() == null) {
                 boolean contiguousBlocks = true;
                 for (int j = i + 1; j < i + requiredWordsCount && j < memory.length; j++) {
-                    if (memory[j].value != null) {
+                    if (memory[j].getValue() != null) {
                         contiguousBlocks = false;
                         break;
                     }

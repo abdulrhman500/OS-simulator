@@ -1,5 +1,8 @@
 package systemcalls;
 
+import exceptions.IllegalMemoryAccessException;
+import memory.Memory;
+
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
 
@@ -19,5 +22,7 @@ public class Output implements SystemCalls {
         System.out.println(s);
     }
 
-
+    public void writeToMemory(int address, String newName, Object value) throws IllegalMemoryAccessException {
+        Memory.getInstance().storeWord(address, newName, value);
+    }
 }
