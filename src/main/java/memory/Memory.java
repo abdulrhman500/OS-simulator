@@ -1,3 +1,5 @@
+package memory;
+
 import exceptions.IllegalMemoryAccessException;
 
 public class Memory {
