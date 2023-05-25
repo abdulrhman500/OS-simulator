@@ -9,8 +9,7 @@ import java.util.Scanner;
 public class Process {
     int lowerBound;
     Memory mem = Memory.getInstance();
-
-
+   private int totalNumberOfInstruction = utils.programInfo.getTotalNumberOfInstruction(this.getCodeLocation());
     State state;
 
     //PCB
@@ -66,5 +65,20 @@ public class Process {
         }
         return Constants.PROGRAM_3_CODE;
 
+    }
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    public int getTotalNumberOfInstruction() {
+        return totalNumberOfInstruction;
+    }
+
+    public void setTotalNumberOfInstruction(int totalNumberOfInstruction) {
+        this.totalNumberOfInstruction = totalNumberOfInstruction;
     }
 }

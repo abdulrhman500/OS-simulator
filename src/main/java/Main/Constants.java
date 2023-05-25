@@ -11,5 +11,6 @@ public class Constants {
     public static final String PROGRAM_2_CODE="src/main/resources/programs/Program_2.txt";
     public static final String PROGRAM_3_CODE="src/main/resources/programs/Program_3.txt";
 
+    public static final int TIME_SLICE = 2;
 
 }
