@@ -31,8 +31,7 @@ public class Memory {
     }
 
     public void storeWord(int address, String newName, Object newValue) throws IllegalMemoryAccessException {
-        memory[address].name = newName;
-        memory[address].value = newValue;
+        memory[address] = new MemoryWord(newName, newValue);
     }
 
     public void freeWord(int address) {
