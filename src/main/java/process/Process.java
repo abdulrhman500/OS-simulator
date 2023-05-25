@@ -10,4 +10,8 @@ public class Process {
         this.id =id;
         this.pc=0;
     }
+
+    public int getId() {
+        return this.id;
+    }
 }
