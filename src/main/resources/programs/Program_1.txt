@@ -1,5 +1,9 @@
 semWait userInput
+semWait userOutput
+print Please enter a value
 assign a input
+print Please enter a value
+semSignal userOutput
 assign b input
 semSignal userInput
 semWait userOutput
