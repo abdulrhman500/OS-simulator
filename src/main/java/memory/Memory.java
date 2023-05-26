@@ -53,17 +53,19 @@ public class Memory {
         if(37/ Constants.PROCESS_SPACE >= 3){
             if(numberOfProcessesInMemory == 0){
                 memory[0] =new MemoryWord("P1 lower bound", 3);
+                numberOfProcessesInMemory++;
                 return 3;
             }
             if(numberOfProcessesInMemory == 1){
                 memory[1] =new MemoryWord("P2 lower bound", 3+Constants.PROCESS_SPACE);
+                numberOfProcessesInMemory++;
                 return 3+Constants.PROCESS_SPACE;
             }
             if(numberOfProcessesInMemory == 2){
                 memory[2] =new MemoryWord("P3 lower bound", 3+2*Constants.PROCESS_SPACE);
+                numberOfProcessesInMemory++;
                 return 3+2*Constants.PROCESS_SPACE;
             }
-            numberOfProcessesInMemory++;
         }
         if(37/ Constants.PROCESS_SPACE >= 2){
             if(numberOfProcessesInMemory == 0){
@@ -120,7 +122,11 @@ public class Memory {
     public String toString() {
         StringBuilder sb =new StringBuilder();
         for(int i=0;i<40;i++){
-            sb.append(i).append(" ").append(memory[i].toString()).append("\n");
+            if(memory[i] != null) {
+                sb.append(i).append(" ").append(memory[i].toString()).append("\n");
+            }else{
+                sb.append("null\n");
+            }
         }
         return sb.toString();
     }

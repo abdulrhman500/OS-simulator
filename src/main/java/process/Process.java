@@ -1,6 +1,7 @@
 package process;
 
 import Main.Constants;
+import exceptions.InvalidResourceException;
 import memory.Memory;
 import parser.Parser;
 import scheduler.Scheduler;
@@ -37,7 +38,7 @@ public class Process {
 
     private void loadInstructions(int startMemAddress, int line) {
         try {
-            File myObj = new File("src/main/resources/programs/" + this.getCodeLocation());
+            File myObj = new File(this.getCodeLocation());
             Scanner reader = new Scanner(myObj);
 
             //skipping already loaded instructions
@@ -54,6 +55,7 @@ public class Process {
             }
             reader.close();
         } catch (Exception ignored) {
+            System.out.println("Problem reading file");
         }
     }
 
@@ -107,7 +109,7 @@ public class Process {
 
     public void execute(){
         int pc = this.getPC();
-        Parser.parse((String) mem.getValueAt(pc));
+        Parser.parse((String) mem.getValueAt(pc),this);
         this.incrementPC();
     }
 

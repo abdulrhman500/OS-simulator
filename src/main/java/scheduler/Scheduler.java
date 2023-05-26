@@ -2,6 +2,7 @@ package scheduler;
 
 import Main.Arrival;
 import Main.Constants;
+import exceptions.InvalidResourceException;
 import process.Process;
 import process.ProcessInfo;
 import process.State;
@@ -91,7 +92,7 @@ public class Scheduler {
         return clock;
     }
 
-    public static void runNextProcess() {
+    public static void runNextProcess(){
         runningProcess = readyQueue.poll();
 
         if (runningProcess == null) {
