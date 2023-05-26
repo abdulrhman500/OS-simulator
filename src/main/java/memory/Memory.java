@@ -79,7 +79,6 @@ public class Memory {
 //                numberOfProcessesInMemory++;
 //                return 3+Constants.PROCESS_SPACE;
 //            }else{
-//                //TODO store a process to disk and set it's pointer to -1
 //                memory[id-1] =new MemoryWord("P"+id +" lower bound",3+Constants.PROCESS_SPACE);
 //                return 3+Constants.PROCESS_SPACE;
 //            }
@@ -90,7 +89,6 @@ public class Memory {
 //                numberOfProcessesInMemory++;
 //                return 3+Constants.PROCESS_SPACE;
 //            }else{
-//                //TODO store the process to disk and set it's pointer to -1;
 //                memory[id-1] =new MemoryWord("P"+id +" lower bound",3+Constants.PROCESS_SPACE);
 //                return 3+Constants.PROCESS_SPACE;
 //            }

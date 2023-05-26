@@ -38,7 +38,6 @@ public int ID ;
 
 
         this.loadInstructions(lowerBound + 7, 0);
-        System.out.println(mem);
     }
 
     private void loadInstructions(int startMemAddress, int lineOffset) {
@@ -107,7 +106,7 @@ public int ID ;
             this.numberOfOffsets++;
             newPC = lowerBound+7;
             this.loadInstructions(lowerBound + 7, NUMBER_OF_INSTRUCTIONS*this.numberOfOffsets);
-            System.out.println(mem);
+
         }
         mem.storeWord(lowerBound + PC_OFFSET, "PC", newPC);
         return newPC;
@@ -160,7 +159,7 @@ public int ID ;
     public void setVariable(String s, Object o) {
         mem.storeWord(this.lowerBound+4+this.numberOfVariables,s,o);
         this.numberOfVariables++;
-        System.out.println(mem);
+
     }
     public int getLowerBound() {
         return lowerBound;
