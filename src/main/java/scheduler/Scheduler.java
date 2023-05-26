@@ -8,8 +8,6 @@ import process.Process;
 import process.ProcessInfo;
 import process.State;
 import utils.DiskIO;
-import javax.print.CancelablePrintJob;
-import javax.print.DocFlavor;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedList;
