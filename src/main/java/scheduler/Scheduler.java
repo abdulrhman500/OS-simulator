@@ -3,6 +3,7 @@ package scheduler;
 import Main.Arrival;
 import Main.Constants;
 import exceptions.InvalidResourceException;
+import mutex.Mutexes;
 import process.Process;
 import process.ProcessInfo;
 import process.State;
@@ -16,7 +17,7 @@ import static Main.Constants.NUMBER_OF_INSTRUCTIONS_PER_TIME_SLICE;
 public class Scheduler {
     public static Queue<Process> blockedOnFile = new LinkedList<Process>();
     public static Queue<Process> blockedOnUserInput = new LinkedList<Process>();
-    public static Queue<Process> getBlockedScreenOutput = new LinkedList<Process>();
+    public static Queue<Process> blockedOnScreenOutput = new LinkedList<Process>();
 
     public static Queue<Process> readyQueue = new LinkedList<Process>();
 
@@ -25,20 +26,20 @@ public class Scheduler {
     public static Process runningProcess;
 
     static Hashtable<Integer, ProcessInfo> processInfoTable = new Hashtable<>();
-    private static Scheduler instance = new Scheduler();
+    private static final Scheduler instance = new Scheduler();
 
     private static int remainingInstruction = NUMBER_OF_INSTRUCTIONS_PER_TIME_SLICE;
 
 
     private static int clock = 0;
-//    static int currentProcessTimer = 0;
 
-    private static ArrayList<Arrival> arrivals = new ArrayList<Arrival>();
+    private static final ArrayList<Arrival> arrivals = new ArrayList<Arrival>();
 
     public void addNewProcess(Process process) {
         process.setState(State.Ready);
         readyQueue.add(process);
-//        processInfoTable.put(process.getId(), pInfo);
+        System.out.println("Scheduler| added New Process with ID : " + process.getId());
+        System.out.println("Scheduler| Ready Queue Updated: " + readyQueue.toString());
     }
 
     private Scheduler() {
@@ -54,8 +55,11 @@ public class Scheduler {
 
 
     public void processTimeUp(Process process) {
+        System.out.println("Scheduler| time up for Process: " + process.getId());
+        System.out.println("Scheduler| Preempted Process: " + process.getId());
         process.setState(State.Ready);
         readyQueue.add(process);
+        System.out.println("Scheduler| Ready Queue Updated: " + readyQueue.toString());
         runningProcess =null;
         remainingInstruction = NUMBER_OF_INSTRUCTIONS_PER_TIME_SLICE;
     }
@@ -78,6 +82,7 @@ public class Scheduler {
         if(runningProcess == null){
             runNextProcess();
         }else{
+            System.out.println("Scheduler| Running  Process: " + runningProcess.getId());
             runningProcess.execute();
             remainingInstruction--;
             if(remainingInstruction==0){
@@ -95,6 +100,7 @@ public class Scheduler {
     public static void runNextProcess(){
         runningProcess = readyQueue.poll();
 
+
         if (runningProcess == null) {
             if (arrivals.size() == finishedQueue.size()) {
                 System.out.println("ALL Processes are Done");
@@ -105,6 +111,7 @@ public class Scheduler {
                 System.out.println("No READY process exists , DeadLock happened");
             }
         } else {
+            System.out.println("Scheduler| Running  Process: " + runningProcess.getId());
             runningProcess.setState(State.Running);
             remainingInstruction = NUMBER_OF_INSTRUCTIONS_PER_TIME_SLICE;
             runningProcess.execute();
@@ -114,8 +121,19 @@ public class Scheduler {
 
     public void simulate() {
         while (finishedQueue.size() != 3) {
+            System.out.println("Scheduler| Clock Cycle: " + getClock()+ " started");
             updateClock();
         }
         System.out.println("Finished All Programs");
+    }
+
+    public void blockProcess(Process process, Mutexes resourceBlockedOn) {
+        System.out.println("Scheduler| Blocked Process: " + process.getId()+ " on resource: " + resourceBlockedOn);
+        switch (resourceBlockedOn){
+            case FILE -> blockedOnFile.add(process);
+            case USERINPUT -> blockedOnUserInput.add(process);
+            case SCREENOUTPUT -> blockedOnScreenOutput.add(process);
+        }
+        runningProcess =null;
     }
 }

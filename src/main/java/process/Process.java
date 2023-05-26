@@ -15,12 +15,14 @@ import static Main.Constants.*;
 public class Process {
     int lowerBound;
     int numberOfOffsets;
+    int numberOfVariables;
 
     static Memory mem = Memory.getInstance();
     static Scheduler scheduler = Scheduler.getInstance();
 
     public Process() {
         this.numberOfOffsets=0;
+        this.numberOfVariables=0;
         this.lowerBound = mem.getLowerBound(PROCESS_COUNT);
 
         mem.storeWord(lowerBound + ID_OFFSET, "ID", Constants.PROCESS_COUNT++);
@@ -30,7 +32,7 @@ public class Process {
 
 
         this.loadInstructions(lowerBound + 7, 0);
-
+        System.out.println(mem);
     }
 
     private void loadInstructions(int startMemAddress, int lineOffset) {
@@ -77,6 +79,7 @@ public class Process {
     }
 
     public void setState(State state) {
+        System.out.println("Process | " + this.getId() + " state changed to " + state);
         mem.storeWord(this.lowerBound + STATE_OFFSET, "state", state);
     }
 
@@ -132,5 +135,20 @@ public class Process {
         int tmpBound = this.lowerBound;
         for (int i = 0; i < PROCESS_SPACE; i++)
             mem.freeWord(tmpBound + i);
+    }
+
+    public String getVariable(String s) {
+        return mem.getVariableByName(s,this.lowerBound+4);
+    }
+
+    @Override
+    public String toString() {
+        return this.getId()+"";
+    }
+
+    public void setVariable(String s, int parseInt) {
+        mem.storeWord(this.lowerBound+4+this.numberOfVariables,s,parseInt);
+        this.numberOfVariables++;
+        System.out.println(mem);
     }
 }

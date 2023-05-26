@@ -14,7 +14,5 @@ public class App {
         scheduler.addProgram(4, PROGRAM_3_CODE);
 
         scheduler.simulate();
-
-
     }
 }
