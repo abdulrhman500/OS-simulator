@@ -28,7 +28,7 @@ public class CPU {
 
     public void setExecutingProcess(Process executingProcess) {
         this.process = executingProcess;
-        remainingInstruction = NUMBER_OF_INSTRUCTIONS_PER_TIME_SLICE * TIME_SLICE;
+        remainingInstruction = NUMBER_OF_INSTRUCTIONS_PER_TIME_SLICE * TIME_SLICE; // allowed clock cycle
     }
 
     public void executeProcess() {
@@ -37,11 +37,12 @@ public class CPU {
             //execute Instruction ?
             //after each execution of an instruction clock at scheduler should be updated;
             scheduler.updateClock();
+            //after each instruction the RemainingInstruction is decreased br 1;
+            decreaseRemainingInstruction();
+
             // if Instruction is halt then call and break;
 //            scheduler.killProcess(process);
 
-            //after each instruction the RemainingInstruction is decreased br 1;
-            decreaseRemainingInstruction();
         }
         //  we also need to check if remaining instruction is halt;
         boolean isHalt =false;

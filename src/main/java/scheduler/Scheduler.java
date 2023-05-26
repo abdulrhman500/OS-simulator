@@ -1,14 +1,13 @@
 package scheduler;
 
 import Main.Arrival;
+import Main.Constants;
 import cpu.CPU;
 import memory.Memory;
 import process.Process;
 import process.ProcessInfo;
 import process.State;
 import utils.DiskIO;
-import javax.print.CancelablePrintJob;
-import javax.print.DocFlavor;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -20,8 +19,6 @@ public class Scheduler {
     public static Queue<Process> getBlockedScreenOutput = new LinkedList<Process>();
 
     public static Queue<Process> readyQueue = new LinkedList<Process>();
-
-//    public static Queue<Process> blockedQueue = new LinkedList<Process>();
 
     public static Queue<Process> finishedQueue = new LinkedList<Process>();
 
@@ -52,15 +49,22 @@ public class Scheduler {
 
 
     public void processTimeUp(Process process) {
-        //update process info
-        process.setState(State.Blocked);
+
+        ProcessInfo curr = processInfoTable.get(process.getId());
+        curr.setExecutedInstructions(curr.getExecutedInstructions() - Constants.NUMBER_OF_INSTRUCTIONS_PER_TIME_SLICE);
+        processInfoTable.put(process.getId(), curr);
+        process.setState(State.Ready);
+        readyQueue.add(process);
+        runNextProcess();
 
     }
 
     public void killProcess(Process process) {
 
-        Memory.getInstance().freeWord(process.getId() - 1);
-
+        process.freeMemory();
+        process.setState(State.Finished);
+        finishedQueue.add(process);
+        runNextProcess();
     }
 
     public int updateClock() {
@@ -78,11 +82,26 @@ public class Scheduler {
     }
 
     public static void runNextProcess() {
-        Process nextProcess = readyQueue.poll();
-        nextProcess.setState(State.Running);
-        cpu.setExecutingProcess(nextProcess);
-        cpu.executeProcess();
+        runningProcess = readyQueue.poll();
 
+        if (runningProcess == null) {
+            if (arrivals.size() == finishedQueue.size())
+                System.out.println("ALL Processes are Done");
+            else {
+                // How to deal with blocked
+                //DEADLOCK
+                System.out.println("No READY process exists , DeadLock happened");
+            }
+
+        } else {
+            runningProcess.setState(State.Running);
+
+
+            cpu.setExecutingProcess(runningProcess);
+
+            cpu.executeProcess();
+
+        }
     }
 
 }

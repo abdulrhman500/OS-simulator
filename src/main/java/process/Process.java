@@ -16,7 +16,7 @@ public class Process {
     // the offset of the last element of the process in the memory will be used check boundaries for updating pc and to free process from memory
 
     static Memory mem = Memory.getInstance();
-    static Scheduler scheduler=Scheduler.getInstance();
+    static Scheduler scheduler = Scheduler.getInstance();
 //    private int totalNumberOfInstruction = Process.getTotalNumberOfInstruction(this.getCodeLocation());
 
     //PCB
@@ -77,7 +77,7 @@ public class Process {
     }
 
     public void setState(State state) {
-        mem.storeWord(this.lowerBound + STATE_OFFSET, "state",state);
+        mem.storeWord(this.lowerBound + STATE_OFFSET, "state", state);
     }
 
 //    public int getTotalNumberOfInstruction() {
@@ -100,7 +100,7 @@ public class Process {
         return newPC;
     }
 
-    public static void createProccess(String path){
+    public static void createProccess(String path) {
         Process p = new Process();
         scheduler.addNewProcess(p);
     }
@@ -110,7 +110,7 @@ public class Process {
         int count = 0;
         try {
             Scanner sc = new Scanner(new File(path));
-            while (sc.hasNext()){
+            while (sc.hasNext()) {
                 count++;
                 sc.nextLine();
             }
@@ -118,5 +118,11 @@ public class Process {
             throw new RuntimeException(e);
         }
         return count;
+    }
+
+    public void freeMemory() {
+        int tmpBound = this.lowerBound;
+        for (int i = 0; i < PROCESS_SPACE; i++)
+            mem.freeWord(tmpBound + i);
     }
 }
