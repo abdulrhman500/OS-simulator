@@ -21,7 +21,7 @@ public class Parser {
 //        Process p =new Process();
         String[] arr = data.split(" ");
         switch (arr[0]){
-            case "semWait" -> System.out.println("semWait " + arr[1]); // TODO actually call semWait and SemSignal and check for resource in enum
+            case "semWait" -> System.out.println("semWait " + arr[1]); //TODO actually call semWait and SemSignal and check for resource in enum
             case "semSignal" -> System.out.println("semSignal " +arr[1]);
             case "print" -> System.out.println("print "); //TODO call a print that checks for mutex and add all the array except for the first element
             case "assign" -> System.out.println("assign " + arr[1] + " " + arr[2]); //TODO call memory assign
