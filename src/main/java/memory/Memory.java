@@ -1,14 +1,14 @@
 package memory;
 
 import Main.Constants;
-import exceptions.IllegalMemoryAccessException;
-
-import java.util.Arrays;
+import scheduler.Scheduler;
 
 public class Memory {
-    private MemoryWord[] memory;
+    private final MemoryWord[] memory;
 
-    private static Memory instance = new Memory();
+    private static final Memory instance = new Memory();
+
+    private static int numberOfProcessesInMemory =0;
 
     private Memory() {
         memory = new MemoryWord[40];
@@ -42,32 +42,75 @@ public class Memory {
         memory[address] = null;
     }
 
-    public int getLowerBound(){
-        int lowerBound = hasContiguousBlocks();
-        if (lowerBound != -1) {
-            //TODO save a process to disk and call this method again
-        }
-        return lowerBound;
-    }
+    public int getLowerBound(int id){
+        /**
+         * since only 3 programs at max will ever be i the memory -> the first 3 memory blocks
+         * will be used to point to the lower bound of each process and if a process is moved to disk
+         * it's lower bound pointer will be set to -1
+         * if Finished then pointer will be null
+         */
 
-    private int hasContiguousBlocks() {
-        //TODO refactor this
-        for (int i = 0; i < memory.length; i++) {
-            if (memory[i] == null || memory[i].getValue() == null) {
-                boolean contiguousBlocks = true;
-                for (int j = i + 1; j < i + Constants.PROCESS_SPACE && j < memory.length; j++) {
-                    if (memory[j].getValue() != null) {
-                        contiguousBlocks = false;
-                        break;
-                    }
-                }
-                if (contiguousBlocks) {
-                    return i;
-                }
+        if(37/ Constants.PROCESS_SPACE >= 3){
+            numberOfProcessesInMemory++;
+            if(numberOfProcessesInMemory == 0){
+                memory[0] =new MemoryWord("P1 lower bound", 3);
+                return 3;
+            }
+            if(numberOfProcessesInMemory == 1){
+                memory[1] =new MemoryWord("P2 lower bound", 3+Constants.PROCESS_SPACE);
+                return 3+Constants.PROCESS_SPACE;
+            }
+            if(numberOfProcessesInMemory == 2){
+                memory[2] =new MemoryWord("P3 lower bound", 3+2*Constants.PROCESS_SPACE);
+                return 3+2*Constants.PROCESS_SPACE;
             }
         }
-        return -1;
+        if(37/ Constants.PROCESS_SPACE >= 2){
+            if(numberOfProcessesInMemory == 0){
+                memory[id-1] =new MemoryWord("P"+id +" lower bound",3);
+                numberOfProcessesInMemory++;
+                return 3+Constants.PROCESS_SPACE;
+            }
+            if(numberOfProcessesInMemory == 1){
+                memory[id-1] =new MemoryWord("P"+id +" lower bound",3+Constants.PROCESS_SPACE);
+                numberOfProcessesInMemory++;
+                return 3+Constants.PROCESS_SPACE;
+            }else{
+                //TODO store a process to disk and set it's pointer to -1
+                memory[id-1] =new MemoryWord("P"+id +" lower bound",3+Constants.PROCESS_SPACE);
+                return 3+Constants.PROCESS_SPACE;
+            }
+        }else{
+            //The memory can take only one process
+            if(numberOfProcessesInMemory == 0){
+                memory[id-1] =new MemoryWord("P"+id +" lower bound",3);
+                numberOfProcessesInMemory++;
+                return 3+Constants.PROCESS_SPACE;
+            }else{
+                //TODO store the process to disk and set it's pointer to -1;
+                memory[id-1] =new MemoryWord("P"+id +" lower bound",3+Constants.PROCESS_SPACE);
+                return 3+Constants.PROCESS_SPACE;
+            }
+        }
     }
+
+    private int storeP1(){
+        memory[0] =new MemoryWord("P1 lower bound", 3);
+        return 3;
+    }
+
+    private int storeP2(){
+        if(37/ Constants.PROCESS_SPACE >= 2){
+            memory[1] =new MemoryWord("P2 lower bound", 3+Constants.PROCESS_SPACE);
+            return 3+Constants.PROCESS_SPACE;
+        }else{
+            //TODO store process 1 to disk and set it's pointer to -1
+            storeP1();
+            memory[1] =new MemoryWord("P2 lower bound", 3);
+            return 3;
+        }
+    }
+
 
     public MemoryWord[] getMemory() {
         return this.memory;

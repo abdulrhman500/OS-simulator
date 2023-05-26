@@ -1,31 +1,23 @@
 package Main;
 
+import process.Process;
 import scheduler.Scheduler;
-import utils.programLoader;
 
 import static Main.Constants.*;
 
 public class App {
 
     public static void main(String[] args) {
-        programLoader pl = new programLoader();
-        while (true) {
-            if (Scheduler.finishedQueue.size() == 3)
-                break;
-
+        while (Scheduler.finishedQueue.size() != 3) {
             if (Scheduler.getClock() == 0) {
-                pl.load(PROGRAM_1_CODE);
+                Process.createProccess(PROGRAM_1_CODE);
             }
-
             if (Scheduler.getClock() == 1) {
-                pl.load(PROGRAM_2_CODE);
+                Process.createProccess(PROGRAM_2_CODE);
             }
-
             if (Scheduler.getClock() == 4) {
-                pl.load(PROGRAM_3_CODE);
+                Process.createProccess(PROGRAM_3_CODE);
             }
-
         }
-
     }
 }
