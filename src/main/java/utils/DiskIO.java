@@ -25,7 +25,7 @@ public class DiskIO {
 
     Hashtable<Integer, Process> stringProcessHashtable = new Hashtable<>();
 
-    public void storeToDisk(int processID) {
+    public void storeToDisk(int processID, int bound) {
         FileWriter fileWriter = null;
         BufferedWriter bufferedWriter = null;
         try {
@@ -36,14 +36,25 @@ public class DiskIO {
 
             fileWriter = new FileWriter(processFile, true);
             bufferedWriter = new BufferedWriter(fileWriter);
-            int lowerBound = Memory.getInstance().getLowerBound(processID);
 
+            int lowerBound =bound;
             for (int i = 0; i < PROCESS_SPACE; i++) {
+                System.out.println("LLLLL "+processID + "  ...... "+lowerBound);
                 MemoryWord curr = Memory.getInstance().loadWord(i + lowerBound);
-                String Name = curr.getName();
-                Object value = curr.getValue();
-                String dataType = getDataType(value);
+                System.out.println("gggggggg "+curr);
+                String Name ;
+                Object value ;
+                String dataType ;
 
+                if(curr == null){
+                    Name ="null";
+                    value = "null";
+                    dataType = "null";
+                }else {
+                    Name = curr.getName();
+                    value = curr.getValue();
+                    dataType = getDataType(value);
+                }
                 bufferedWriter.write(Name);
                 bufferedWriter.newLine();
                 bufferedWriter.write(value + "");

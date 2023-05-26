@@ -97,7 +97,6 @@ public class Scheduler {
             runNextProcess();
         }else{
             System.out.println("Scheduler| Running  Process: " + runningProcess.getId());
-            System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<< runing process  = "+runningProcess);
            int halt = runningProcess.execute();
             remainingInstruction--;
             if(remainingInstruction==0 && halt!=1){
