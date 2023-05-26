@@ -8,16 +8,16 @@ import static Main.Constants.TIME_SLICE;
 
 public class CPU {
 
-    private CPU instance;
-    private Process executingProcess;
+    private static CPU instance;
+    private Process process;
 
     private Scheduler scheduler;
 
 
     private int remainingInstruction = NUMBER_OF_INSTRUCTIONS_PER_TIME_SLICE * TIME_SLICE;
 
-    public CPU getInstance() {
-        if (this.instance == null)
+    public static CPU getInstance() {
+        if (instance == null)
             return new CPU();
         return instance;
     }
@@ -27,10 +27,10 @@ public class CPU {
     }
 
     public void setExecutingProcess(Process executingProcess) {
-        this.executingProcess = executingProcess;
+        this.process = executingProcess;
     }
 
-    public void executeProcess(Process process) {
+    public void executeProcess() {
         while (remainingInstruction != 0) {
             int currentPC = process.getPC();
             //execute Instruction ?
@@ -59,7 +59,7 @@ public class CPU {
         return remainingInstruction;
     }
 
-    public void decreaseRemainingInstruction() {
+    private void decreaseRemainingInstruction() {
         this.remainingInstruction--;
     }
 }

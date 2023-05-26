@@ -1,9 +1,11 @@
 package scheduler;
 
+import cpu.CPU;
 import process.Process;
 import process.ProcessInfo;
 import process.State;
 
+import javax.print.CancelablePrintJob;
 import javax.print.DocFlavor;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -23,7 +25,7 @@ public class Scheduler {
     public static Process runningProcess;
 
     static Hashtable<Integer, ProcessInfo> processInfoTable = new Hashtable<>();
-
+    private static CPU cpu = CPU.getInstance();
 
     private static int clock = 0;
 //    static int currentProcessTimer = 0;
@@ -42,6 +44,7 @@ public class Scheduler {
 
     public void processTimeUp(Process process) {
         //update process info
+        process.setState(State.Blocked);
 
     }
 
@@ -49,11 +52,20 @@ public class Scheduler {
 
     }
 
-    public int  updateClock() {
+    public int updateClock() {
         return ++clock;
     }
+
     public static int getClock() {
         return clock;
+    }
+
+    public static void runNextProcess() {
+        Process nextProcess = readyQueue.poll();
+        nextProcess.setState(State.Running);
+        cpu.setExecutingProcess(nextProcess);
+        cpu.executeProcess();
+
     }
 
 }
