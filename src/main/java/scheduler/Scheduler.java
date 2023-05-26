@@ -24,11 +24,12 @@ public class Scheduler {
 
     static Hashtable<Integer, ProcessInfo> processInfoTable = new Hashtable<>();
 
-    static int clock = 0;
+
+    private static int clock = 0;
 //    static int currentProcessTimer = 0;
 
     public void addNewProcess(Process process) {
-        ProcessInfo pInfo = new ProcessInfo(clock, process.getTotalNumberOfInstruction(), 0);
+        ProcessInfo pInfo = new ProcessInfo(getClock(), process.getTotalNumberOfInstruction(), 0);
         process.setState(State.Ready);
         readyQueue.add(process);
         processInfoTable.put(process.getId(), pInfo);
@@ -45,5 +46,14 @@ public class Scheduler {
     }
 
     public void killProcess(Process process) {
+
     }
+
+    public int  updateClock() {
+        return ++clock;
+    }
+    public static int getClock() {
+        return clock;
+    }
+
 }

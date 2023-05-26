@@ -34,7 +34,8 @@ public class CPU {
         while (remainingInstruction != 0) {
             int currentPC = process.getPC();
             //execute Instruction ?
-
+//after each execution of an instruction clock at scheduler should be updated;
+         scheduler.updateClock();
             // if Instruction is halt then call and break;
             scheduler.killProcess(process);
 
