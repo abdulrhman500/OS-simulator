@@ -1,5 +1,6 @@
 package scheduler;
 
+import Main.Arrival;
 import cpu.CPU;
 import process.Process;
 import process.ProcessInfo;
@@ -7,6 +8,7 @@ import process.State;
 
 import javax.print.CancelablePrintJob;
 import javax.print.DocFlavor;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -30,6 +32,7 @@ public class Scheduler {
     private static int clock = 0;
 //    static int currentProcessTimer = 0;
 
+    public static ArrayList<Arrival> arrivals = new ArrayList<Arrival>();
     public void addNewProcess(Process process) {
         ProcessInfo pInfo = new ProcessInfo(getClock(), process.getTotalNumberOfInstruction(), 0);
         process.setState(State.Ready);

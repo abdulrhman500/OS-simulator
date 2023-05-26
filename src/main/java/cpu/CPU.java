@@ -28,6 +28,7 @@ public class CPU {
 
     public void setExecutingProcess(Process executingProcess) {
         this.process = executingProcess;
+        remainingInstruction = NUMBER_OF_INSTRUCTIONS_PER_TIME_SLICE * TIME_SLICE;
     }
 
     public void executeProcess() {
