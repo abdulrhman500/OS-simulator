@@ -51,7 +51,6 @@ public class Memory {
          */
 
         if(37/ Constants.PROCESS_SPACE >= 3){
-            numberOfProcessesInMemory++;
             if(numberOfProcessesInMemory == 0){
                 memory[0] =new MemoryWord("P1 lower bound", 3);
                 return 3;
@@ -64,6 +63,7 @@ public class Memory {
                 memory[2] =new MemoryWord("P3 lower bound", 3+2*Constants.PROCESS_SPACE);
                 return 3+2*Constants.PROCESS_SPACE;
             }
+            numberOfProcessesInMemory++;
         }
         if(37/ Constants.PROCESS_SPACE >= 2){
             if(numberOfProcessesInMemory == 0){

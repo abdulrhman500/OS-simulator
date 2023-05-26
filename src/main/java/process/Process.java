@@ -2,6 +2,7 @@ package process;
 
 import Main.Constants;
 import memory.Memory;
+import parser.Parser;
 import scheduler.Scheduler;
 
 import java.io.File;
@@ -26,7 +27,7 @@ public class Process {
 
         mem.storeWord(lowerBound + ID_OFFSET, "ID", Constants.PROCESS_COUNT++);
         mem.storeWord(lowerBound + STATE_OFFSET, "state", State.Ready);
-        mem.storeWord(lowerBound + PC_OFFSET, "PC", 0);
+        mem.storeWord(lowerBound + PC_OFFSET, "PC", (lowerBound+7));
         mem.storeWord(lowerBound + LOWER_BOUND_OFFSET, "lower-bound", lowerBound);
 
 
@@ -43,7 +44,7 @@ public class Process {
             for (int i = 0; i < line; i++) {
                 reader.nextLine();
             }
-//what if there is no enough space for the  NUMBER_OF_INSTRUCTIONS ?
+
             for (int i = 0; i < Constants.NUMBER_OF_INSTRUCTIONS; i++) {
                 mem.storeWord(startMemAddress + i, "I" + i, reader.nextLine());
                 if (!reader.hasNextLine()) {
@@ -92,8 +93,7 @@ public class Process {
         return (Integer) mem.loadWord(lowerBound + PC_OFFSET).getValue();
     }
 
-    public int updatePC() {
-        // what if pc +1 is out of the allocated memory of the process;
+    public int incrementPC() {
         //TODO handle when the PC reaches the end of loaded instructions
         int newPC = (Integer) (getPC() + 1);
         mem.storeWord(lowerBound + PC_OFFSET, "PC", newPC);
@@ -105,6 +105,11 @@ public class Process {
         scheduler.addNewProcess(p);
     }
 
+    public void execute(){
+        int pc = this.getPC();
+        Parser.parse((String) mem.getValueAt(pc));
+        this.incrementPC();
+    }
 
     public static int getTotalNumberOfInstruction(String path) {
         int count = 0;

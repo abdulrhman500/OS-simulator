@@ -7,18 +7,7 @@ import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 public class Parser {
-    public static void parse(String programPath) throws FileNotFoundException {
-        File myObj = new File("src/main/resources/programs/"+ programPath);
-        Scanner Reader = new Scanner(myObj);
-        while (Reader.hasNextLine()) {
-            String data = Reader.nextLine();
-            parseLine(data);
-        }
-        Reader.close();
-    }
-
-    private static void parseLine(String data) {
-//        Process p =new Process();
+    public static void parse(String data) {
         String[] arr = data.split(" ");
         switch (arr[0]){
             case "semWait" -> System.out.println("semWait " + arr[1]); //TODO actually call semWait and SemSignal and check for resource in enum
