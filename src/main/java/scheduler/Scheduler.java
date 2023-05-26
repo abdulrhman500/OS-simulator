@@ -3,10 +3,14 @@ package scheduler;
 import Main.Arrival;
 import Main.Constants;
 import exceptions.InvalidResourceException;
+import memory.Memory;
+import memory.MemoryWord;
 import mutex.Mutexes;
 import process.Process;
 import process.ProcessInfo;
 import process.State;
+import utils.DiskIO;
+
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedList;
@@ -30,11 +34,13 @@ public class Scheduler {
 
     private static int remainingInstruction = NUMBER_OF_INSTRUCTIONS_PER_TIME_SLICE;
 
-
     private static int clock = 0;
 
     private static final ArrayList<Arrival> arrivals = new ArrayList<Arrival>();
 
+    static boolean isDeadLock = false;
+
+    static int maxArrivalTime = Integer.MIN_VALUE;
     public void addNewProcess(Process process) {
         process.setState(State.Ready);
         readyQueue.add(process);
@@ -50,6 +56,8 @@ public class Scheduler {
     }
 
     public void addProgram(int time,String path){
+        if(time>maxArrivalTime)
+            maxArrivalTime = time;
         arrivals.add(new Arrival(time,path));
     }
 
@@ -105,12 +113,12 @@ public class Scheduler {
             if (arrivals.size() == finishedQueue.size()) {
                 System.out.println("ALL Processes are Done");
             }else {
-                // How to deal with blocked
-                //DEADLOCK
-                //TODO handle the case when it's not a deadlock only a late process arrival
-                System.out.println("No READY process exists , DeadLock happened");
+                if(getClock()>maxArrivalTime)
+                    isDeadLock = true;
             }
         } else {
+            int PID = runningProcess.ID;
+            runningProcess.setLowerBound(Memory.getInstance().getLowerBound(PID));
             System.out.println("Scheduler| Running  Process: " + runningProcess.getId());
             runningProcess.setState(State.Running);
             remainingInstruction = NUMBER_OF_INSTRUCTIONS_PER_TIME_SLICE;
@@ -121,9 +129,14 @@ public class Scheduler {
 
     public void simulate() {
         while (finishedQueue.size() != 3) {
+            if(isDeadLock)
+                break;
             System.out.println("Scheduler| Clock Cycle: " + getClock()+ " started");
             updateClock();
         }
+        if (isDeadLock)
+            System.out.println("No More Ready Process Exists. DeadLock Happened");
+        else
         System.out.println("Finished All Programs");
     }
 

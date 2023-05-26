@@ -20,7 +20,7 @@ public class Process {
     public void setLowerBound(int lowerBound) {
         this.lowerBound = lowerBound;
     }
-
+public int ID ;
     int numberOfVariables;
 
     static Memory mem = Memory.getInstance();
@@ -30,7 +30,7 @@ public class Process {
         this.numberOfOffsets=0;
         this.numberOfVariables=0;
         this.lowerBound = mem.getLowerBound(PROCESS_COUNT);
-
+        this.ID = PROCESS_COUNT;
         mem.storeWord(lowerBound + ID_OFFSET, "ID", Constants.PROCESS_COUNT++);
         mem.storeWord(lowerBound + STATE_OFFSET, "state", State.Ready);
         mem.storeWord(lowerBound + PC_OFFSET, "PC", (lowerBound+7));
