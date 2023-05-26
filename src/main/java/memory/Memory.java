@@ -21,7 +21,6 @@ public class Memory {
 
     public String getVariableByName(String wantedName,int start) {
         for (int i = start; i < start + 3; i++) {
-            System.out.println("qqq"+this);
             if (memory[i].getName().equals(wantedName))
                 return memory[i].getValue()+"";
         }
