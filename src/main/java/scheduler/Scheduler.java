@@ -25,7 +25,7 @@ public class Scheduler {
     static Hashtable<Integer, ProcessInfo> processInfoTable = new Hashtable<>();
 
     static int clock = 0;
-
+//    static int currentProcessTimer = 0;
 
     public void addNewProcess(Process process) {
         ProcessInfo pInfo = new ProcessInfo(clock, process.getTotalNumberOfInstruction(), 0);
@@ -39,4 +39,11 @@ public class Scheduler {
     }
 
 
+    public void processTimeUp(Process process) {
+        //update process info
+
+    }
+
+    public void killProcess(Process process) {
+    }
 }
