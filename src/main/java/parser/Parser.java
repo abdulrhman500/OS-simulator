@@ -83,7 +83,6 @@ public class Parser {
             int i=0;
             try {
                 String s =p.getVariable(arr[3]);
-                System.out.println(s);
              p.setVariable(arr[1], systemCalls.readFile(s));
             }catch (Exception e){
                 e.printStackTrace();
