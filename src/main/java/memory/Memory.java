@@ -119,17 +119,22 @@ public class Memory {
                 //choose any process but not the running one
                 if (lowerBoundOfRunning != (Integer) memory[chosenProcessID].getValue()) break;
             }
+            System.out.println("Memory | Process with ID = " + (chosenProcessID + 1) + "is moved to disk and points to -1 .");
+            System.out.println("Memory | Process with ID = " + (processId + 1) + " took its place and points to address = " + bound + " .");
+
             //will return the lower bound of the chosen proccses
             bound = (Integer) memory[chosenProcessID].getValue();
             //make the chosen process to point to -1
             memory[chosenProcessID].setValue(-1);
-            DiskIO.getInstance().storeToDisk(chosenProcessID);
+            DiskIO.getInstance().storeToDisk(chosenProcessID + 1);
         }
 
-        memory[processId-1].setValue(bound);
+        memory[processId - 1].setValue(bound);
 
         if (old == -1) {
+
             DiskIO.getInstance().loadFromDisk(processId, bound);
+            System.out.println("Memory | Process with ID = " + (processId + 1) + " is loaded from Disk and its address = " + bound + " .");
         }
 
 
