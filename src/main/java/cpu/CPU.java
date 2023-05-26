@@ -28,20 +28,20 @@ public class CPU {
 
     public void setExecutingProcess(Process executingProcess) {
         this.process = executingProcess;
+        remainingInstruction = NUMBER_OF_INSTRUCTIONS_PER_TIME_SLICE * TIME_SLICE;
     }
 
     public void executeProcess() {
         while (remainingInstruction != 0) {
             int currentPC = process.getPC();
             //execute Instruction ?
-//after each execution of an instruction clock at scheduler should be updated;
-         scheduler.updateClock();
+            //after each execution of an instruction clock at scheduler should be updated;
+            scheduler.updateClock();
             // if Instruction is halt then call and break;
-            scheduler.killProcess(process);
+//            scheduler.killProcess(process);
 
             //after each instruction the RemainingInstruction is decreased br 1;
             decreaseRemainingInstruction();
-
         }
         //  we also need to check if remaining instruction is halt;
         boolean isHalt =false;
