@@ -20,10 +20,9 @@ public class Parser {
                 case "print" -> callPrint(arr,p);
                 case "assign" -> callAssign(arr,p);
                 case "writeFile" ->  callWriteFile(arr[1],arr[2],p);
-                case "readFile" -> System.out.println("readFile " + arr[1]); //TODO read from file and check for mutex
                 case "printFromTo" -> callPrintFromTo(arr[1],arr[2],p);
                 case "Halt" -> callHalt(p);
-                default -> System.out.println("Invalid command"); //TODO add exception
+                default -> System.out.println("Invalid command");
             }
         }catch (InvalidResourceException e){
             System.err.println("Invalid Resource " + arr[1]);
