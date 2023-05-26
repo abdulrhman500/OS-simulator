@@ -127,11 +127,13 @@ public class Scheduler {
 
     public void simulate() {
         while (finishedQueue.size() != 3) {
+            if(isDeadLock)
+                break;
             System.out.println("Scheduler| Clock Cycle: " + getClock()+ " started");
             updateClock();
         }
         if (isDeadLock)
-            System.out.println("No READY Process Exists. DeadLock Happened");
+            System.out.println("No More Ready Process Exists. DeadLock Happened");
         else
             System.out.println("Finished All Programs");
     }
