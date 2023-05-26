@@ -101,8 +101,9 @@ public class Memory {
 
 
     public int getLowerBound(int processId) {
-
-        Integer old = (Integer) memory[processId - 1].getValue();
+        Integer old = null;
+        if(memory[processId - 1] != null )
+         old =  (Integer) memory[processId - 1].getValue();
         if (old != null && old != -1) return old;
 
         int bound = -1;

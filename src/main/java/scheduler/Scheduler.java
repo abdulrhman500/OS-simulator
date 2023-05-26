@@ -76,9 +76,12 @@ public class Scheduler {
 
     public void killProcess(Process process) {
 
-        process.freeMemory();
         process.setState(State.Finished);
         finishedQueue.add(process);
+            if(readyQueue.contains(process))
+                readyQueue.remove(process);
+
+        process.freeMemory();
         runNextProcess();
         Scheduler.printQueues();
     }
@@ -94,13 +97,17 @@ public class Scheduler {
             runNextProcess();
         }else{
             System.out.println("Scheduler| Running  Process: " + runningProcess.getId());
-            runningProcess.execute();
+            System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<< runing process  = "+runningProcess);
+           int halt = runningProcess.execute();
             remainingInstruction--;
-            if(remainingInstruction==0){
+            if(remainingInstruction==0 && halt!=1){
                 processTimeUp(runningProcess);
             }
         }
         clock++;
+        if(clock==18){
+            System.out.println("here");
+        }
         return clock;
     }
 
@@ -127,21 +134,24 @@ public class Scheduler {
             remainingInstruction = NUMBER_OF_INSTRUCTIONS_PER_TIME_SLICE;
             runningProcess.execute();
             remainingInstruction--;
+
         }
         Scheduler.printQueues();
     }
 
     public void simulate() {
-        while (finishedQueue.size() != 3) {
-            if(isDeadLock)
+        while (finishedQueue.size() != arrivals.size()) {
+            if(isDeadLock) {
                 break;
+            }
             System.out.println("Scheduler| Clock Cycle: " + getClock()+ " started");
             updateClock();
         }
-        if (isDeadLock)
+        if (isDeadLock) {
             System.out.println("No More Ready Process Exists. DeadLock Happened");
-        else
-        System.out.println("Finished All Programs");
+        }else {
+            System.out.println("Finished All Programs");
+        }
     }
 
     public void blockProcess(Process process, Mutexes resourceBlockedOn) {

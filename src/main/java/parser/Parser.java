@@ -63,7 +63,6 @@ public class Parser {
 
     private static void checkPrint(Process p) {
         if(Mutex.screenOutputMutexProcessID !=p.getId()){
-            //TODO check if we should block the process instead
             System.err.println("error Invalid Program Code");
         }
     }
@@ -81,9 +80,14 @@ public class Parser {
             }
             p.setVariable(arr[1], o);
         } else if (arr[2].equalsIgnoreCase("readfile")) {
+            int i=0;
             try {
-             p.setVariable(arr[1], systemCalls.readFile(p.getVariable(arr[3])));
-            }catch (Exception ignored){}
+                String s =p.getVariable(arr[3]);
+                System.out.println(s);
+             p.setVariable(arr[1], systemCalls.readFile(s));
+            }catch (Exception e){
+                e.printStackTrace();
+            }
         }else{
             p.setVariable(arr[1],Integer.parseInt(arr[2]));
         }
