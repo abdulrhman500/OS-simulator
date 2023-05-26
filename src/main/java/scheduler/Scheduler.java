@@ -24,8 +24,7 @@ public class Scheduler {
     public static Queue<Process> finishedQueue = new LinkedList<Process>();
 
     public static Process runningProcess;
-    static boolean isDeadLock = false;
-    static int maxArrivalTime = Integer.MIN_VALUE;
+
     static Hashtable<Integer, ProcessInfo> processInfoTable = new Hashtable<>();
     private static final Scheduler instance = new Scheduler();
 
@@ -66,11 +65,11 @@ public class Scheduler {
     }
 
     public void killProcess(Process process) {
-        process.setState(State.Finished);
+
         process.freeMemory();
+        process.setState(State.Finished);
         finishedQueue.add(process);
-        runningProcess=null;
-        //TODO print Finished Queue
+        runNextProcess();
     }
 
     public int updateClock() {
@@ -84,9 +83,9 @@ public class Scheduler {
             runNextProcess();
         }else{
             System.out.println("Scheduler| Running  Process: " + runningProcess.getId());
-            int halt = runningProcess.execute();
+            runningProcess.execute();
             remainingInstruction--;
-            if(remainingInstruction==0 && halt!=1){
+            if(remainingInstruction==0){
                 processTimeUp(runningProcess);
             }
         }
@@ -106,8 +105,8 @@ public class Scheduler {
             if (arrivals.size() == finishedQueue.size()) {
                 System.out.println("ALL Processes are Done");
             }else {
-                if (getClock() > getInstance().maxArrivalTime)
-                    isDeadLock = true;
+                // How to deal with blocked
+                //DEADLOCK
                 //TODO handle the case when it's not a deadlock only a late process arrival
                 System.out.println("No READY process exists , DeadLock happened");
             }
@@ -122,8 +121,6 @@ public class Scheduler {
 
     public void simulate() {
         while (finishedQueue.size() != 3) {
-            if(isDeadLock)
-                break;
             System.out.println("Scheduler| Clock Cycle: " + getClock()+ " started");
             updateClock();
         }
@@ -131,7 +128,6 @@ public class Scheduler {
     }
 
     public void blockProcess(Process process, Mutexes resourceBlockedOn) {
-        //TODO print queues
         System.out.println("Scheduler| Blocked Process: " + process.getId()+ " on resource: " + resourceBlockedOn);
         switch (resourceBlockedOn){
             case FILE -> blockedOnFile.add(process);

@@ -22,6 +22,7 @@ public class Constants {
     public static final int LOWER_BOUND_OFFSET = 3;
 
     public static final int NUMBER_OF_INSTRUCTIONS_PER_TIME_SLICE = 2;
+    public static final String DISK_PATH ="src/main/resources/Disk" ;
 
 
 }
