@@ -6,7 +6,7 @@ import memory.Memory;
 import process.Process;
 import process.ProcessInfo;
 import process.State;
-
+import utils.DiskIO;
 import javax.print.CancelablePrintJob;
 import javax.print.DocFlavor;
 import java.util.ArrayList;
@@ -35,6 +35,7 @@ public class Scheduler {
 //    static int currentProcessTimer = 0;
 
     public static ArrayList<Arrival> arrivals = new ArrayList<Arrival>();
+
     public void addNewProcess(Process process) {
         process.setState(State.Ready);
         readyQueue.add(process);
@@ -44,10 +45,10 @@ public class Scheduler {
     private Scheduler() {
 
     }
+
     public static Scheduler getInstance() {
         return instance;
     }
-
 
 
     public void processTimeUp(Process process) {
@@ -58,12 +59,18 @@ public class Scheduler {
 
     public void killProcess(Process process) {
 
-        Memory.getInstance().freeWord(process.getId()-1);
+        Memory.getInstance().freeWord(process.getId() - 1);
 
     }
 
     public int updateClock() {
-        return ++clock;
+
+        ++clock;
+        for (Arrival tmp : arrivals) {
+            if (tmp.getArrivedAt() == clock) ;
+//                loadProgram(tmp.getProgramPath());
+        }
+        return clock;
     }
 
     public static int getClock() {
