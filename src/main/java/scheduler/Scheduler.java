@@ -2,6 +2,7 @@ package scheduler;
 
 import Main.Arrival;
 import cpu.CPU;
+import memory.Memory;
 import process.Process;
 import process.ProcessInfo;
 import process.State;
@@ -20,7 +21,7 @@ public class Scheduler {
 
     public static Queue<Process> readyQueue = new LinkedList<Process>();
 
-    public static Queue<Process> blockedQueue = new LinkedList<Process>();
+//    public static Queue<Process> blockedQueue = new LinkedList<Process>();
 
     public static Queue<Process> finishedQueue = new LinkedList<Process>();
 
@@ -28,21 +29,25 @@ public class Scheduler {
 
     static Hashtable<Integer, ProcessInfo> processInfoTable = new Hashtable<>();
     private static CPU cpu = CPU.getInstance();
+    private static Scheduler instance = new Scheduler();
 
     private static int clock = 0;
 //    static int currentProcessTimer = 0;
 
     public static ArrayList<Arrival> arrivals = new ArrayList<Arrival>();
     public void addNewProcess(Process process) {
-        ProcessInfo pInfo = new ProcessInfo(getClock(), process.getTotalNumberOfInstruction(), 0);
         process.setState(State.Ready);
         readyQueue.add(process);
-        processInfoTable.put(process.getId(), pInfo);
+//        processInfoTable.put(process.getId(), pInfo);
     }
 
-    public Scheduler() {
+    private Scheduler() {
 
     }
+    public static Scheduler getInstance() {
+        return instance;
+    }
+
 
 
     public void processTimeUp(Process process) {
@@ -52,6 +57,8 @@ public class Scheduler {
     }
 
     public void killProcess(Process process) {
+
+        Memory.getInstance().freeWord(process.getId()-1);
 
     }
 

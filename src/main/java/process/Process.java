@@ -2,26 +2,27 @@ package process;
 
 import Main.Constants;
 import memory.Memory;
+import scheduler.Scheduler;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.Scanner;
 
 import static Main.Constants.*;
 
 public class Process {
     int lowerBound;
-    int maxBound;
+//    int maxBound;
     // the offset of the last element of the process in the memory will be used check boundaries for updating pc and to free process from memory
 
-    Memory mem = Memory.getInstance();
-    private int totalNumberOfInstruction = utils.programInfo.getTotalNumberOfInstruction(this.getCodeLocation());
-    State state;
+    static Memory mem = Memory.getInstance();
+    static Scheduler scheduler=Scheduler.getInstance();
+//    private int totalNumberOfInstruction = Process.getTotalNumberOfInstruction(this.getCodeLocation());
 
     //PCB
     //Memory boundaries
     public Process() {
-        mem.getLowerBound();
-        this.lowerBound = mem.getLowerBound();
+        this.lowerBound = mem.getLowerBound(PROCESS_COUNT);
 
         mem.storeWord(lowerBound + ID_OFFSET, "ID", Constants.PROCESS_COUNT++);
         mem.storeWord(lowerBound + STATE_OFFSET, "state", State.Ready);
@@ -31,7 +32,6 @@ public class Process {
 
         this.loadInstructions(lowerBound + 7, 0);
 
-        this.state = State.Ready;
     }
 
     private void loadInstructions(int startMemAddress, int line) {
@@ -73,32 +73,50 @@ public class Process {
     }
 
     public State getState() {
-        return state;
+        return (State) mem.getValueAt(this.lowerBound + STATE_OFFSET);
     }
 
     public void setState(State state) {
-        //TODO
-        this.state = state;
+        mem.storeWord(this.lowerBound + STATE_OFFSET, "state",state);
     }
 
-    public int getTotalNumberOfInstruction() {
-        return totalNumberOfInstruction;
-    }
-
-    public void setTotalNumberOfInstruction(int totalNumberOfInstruction) {
-        this.totalNumberOfInstruction = totalNumberOfInstruction;
-    }
+//    public int getTotalNumberOfInstruction() {
+//        return totalNumberOfInstruction;
+//    }
+//
+//    public void setTotalNumberOfInstruction(int totalNumberOfInstruction) {
+//        this.totalNumberOfInstruction = totalNumberOfInstruction;
+//    }
 
     public int getPC() {
-
         return (Integer) mem.loadWord(lowerBound + PC_OFFSET).getValue();
     }
 
     public int updatePC() {
-// what if pc +1 is out of the allocated memory of the process;
-
+        // what if pc +1 is out of the allocated memory of the process;
+        //TODO handle when the PC reaches the end of loaded instructions
         int newPC = (Integer) (getPC() + 1);
         mem.storeWord(lowerBound + PC_OFFSET, "PC", newPC);
         return newPC;
+    }
+
+    public static void createProccess(String path){
+        Process p = new Process();
+        scheduler.addNewProcess(p);
+    }
+
+
+    public static int getTotalNumberOfInstruction(String path) {
+        int count = 0;
+        try {
+            Scanner sc = new Scanner(new File(path));
+            while (sc.hasNext()){
+                count++;
+                sc.nextLine();
+            }
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        return count;
     }
 }
