@@ -2,6 +2,8 @@ package utils;
 
 import java.io.*;
 import java.util.Hashtable;
+import java.util.Scanner;
+
 import memory.Memory;
 import memory.MemoryWord;
 import process.Process;
@@ -59,6 +61,8 @@ public class DiskIO {
                 bufferedWriter.flush();
                 bufferedWriter.close();
                 fileWriter.close();
+                System.out.println("store To Disk is done");
+                printFileToConsole(processID);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
@@ -80,6 +84,8 @@ public class DiskIO {
     }
 
     public void loadFromDisk(int processID, int address) {
+        System.out.println("The next file is loaded from disk to location "+address);
+        printFileToConsole(processID);
 
         String fileName = getProcessFileName(processID);
 
@@ -127,7 +133,23 @@ public class DiskIO {
 
         return 0;
     }
+    public void printFileToConsole(int processID) {
+        File tmp = new File(getProcessFileName(processID));
+        try {
+            Scanner sc = new Scanner(tmp);
+            System.out.println("--------START OF PROCESS " + processID + " ON DISK-----------");
 
+            while (sc.hasNext()) {
+                System.out.println(sc.nextLine());
+            }
+            System.out.println("---------END OF PROCESS ON DISK--------------");
+
+
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
     public String getProcessFileName(int processID) {
         return DISK_PATH + "/" + processID + ".txt";
     }
