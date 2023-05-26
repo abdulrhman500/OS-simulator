@@ -115,19 +115,28 @@ public class Memory {
             return bound;
         } else {
             int lowerBoundOfRunning = Scheduler.runningProcess.getLowerBound();
-            int chosenProcessID = 0;
-            for (; chosenProcessID < 3; chosenProcessID++) {
+            int chosenProcessID = -1;
+            for (int i = 0; i < 3; i++) {
                 //choose any process but not the running one
-                if (lowerBoundOfRunning != (Integer) memory[chosenProcessID].getValue()) break;
+                if (memory[i] !=null && lowerBoundOfRunning != (Integer) memory[i].getValue())
+                {
+                    chosenProcessID = i ;
+                    break;
+                }
             }
-            System.out.println("Memory | Process with ID = " + (chosenProcessID + 1) + "is moved to disk and points to -1 .");
-            System.out.println("Memory | Process with ID = " + (processId + 1) + " took its place and points to address = " + bound + " .");
+            if(chosenProcessID == -1) {
+                chosenProcessID = 0;
+                memory[chosenProcessID] = new MemoryWord("P" + (chosenProcessID + 1), 3);
+            }
 
             //will return the lower bound of the chosen proccses
             bound = (Integer) memory[chosenProcessID].getValue();
             //make the chosen process to point to -1
+            System.out.println("Memory | Process with ID = " + (chosenProcessID + 1) + " is moved to disk and points to -1 .");
+            System.out.println("Memory | Process with ID = " + (processId + 1) + " took its place and points to address = " + bound + " .");
+
             memory[chosenProcessID].setValue(-1);
-            DiskIO.getInstance().storeToDisk(chosenProcessID + 1);
+            DiskIO.getInstance().storeToDisk(chosenProcessID + 1,bound);
         }
 
         memory[processId - 1].setValue(bound);
