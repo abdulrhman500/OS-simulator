@@ -18,12 +18,12 @@ public class Memory {
         return instance;
     }
 
-    public int searchForWord(String wantedName) {
-        for (int i = 0; i < memory.length; i++) {
+    public String getVariableByName(String wantedName,int start) {
+        for (int i = start; i < 3; i++) {
             if (memory[i].getName().equals(wantedName))
-                return i;
+                return (String)memory[i].getValue();
         }
-        return -1;
+        return null;
     }
 
     public Object getValueAt(int address){
@@ -96,22 +96,7 @@ public class Memory {
         }
     }
 
-    private int storeP1(){
-        memory[0] =new MemoryWord("P1 lower bound", 3);
-        return 3;
-    }
 
-    private int storeP2(){
-        if(37/ Constants.PROCESS_SPACE >= 2){
-            memory[1] =new MemoryWord("P2 lower bound", 3+Constants.PROCESS_SPACE);
-            return 3+Constants.PROCESS_SPACE;
-        }else{
-            //TODO store process 1 to disk and set it's pointer to -1
-            storeP1();
-            memory[1] =new MemoryWord("P2 lower bound", 3);
-            return 3;
-        }
-    }
 
 
     public MemoryWord[] getMemory() {
@@ -121,13 +106,13 @@ public class Memory {
     @Override
     public String toString() {
         StringBuilder sb =new StringBuilder();
+        sb.append("=======> Memory: <=======\n");
         for(int i=0;i<40;i++){
             if(memory[i] != null) {
                 sb.append(i).append(" ").append(memory[i].toString()).append("\n");
-            }else{
-                sb.append("null\n");
             }
         }
+        sb.append("------------------");
         return sb.toString();
     }
 }

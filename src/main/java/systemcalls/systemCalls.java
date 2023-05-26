@@ -15,7 +15,7 @@ import java.util.Scanner;
 
 public class systemCalls {
     public static void print(String s) {
-        System.out.println(s);
+        System.out.println("======> "+s+"<======");
     }
 
     public static void assign(int address, String newName, Object value) throws IllegalMemoryAccessException {
@@ -34,7 +34,7 @@ public class systemCalls {
         while (sc.hasNextLine()){
             sb.append(sc.nextLine());
         }
-        return sb.toString()
+        return sb.toString();
     }
 
     public static void printFromTo(int x,int y){
