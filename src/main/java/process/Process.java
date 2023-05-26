@@ -15,6 +15,11 @@ import static Main.Constants.*;
 public class Process {
     int lowerBound;
     int numberOfOffsets;
+
+    public void setLowerBound(int lowerBound) {
+        this.lowerBound = lowerBound;
+    }
+
     int numberOfVariables;
 
     static Memory mem = Memory.getInstance();
@@ -150,5 +155,8 @@ public class Process {
         mem.storeWord(this.lowerBound+4+this.numberOfVariables,s,parseInt);
         this.numberOfVariables++;
         System.out.println(mem);
+    }
+    public int getLowerBound() {
+        return lowerBound;
     }
 }
