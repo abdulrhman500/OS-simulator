@@ -8,6 +8,7 @@ import scheduler.Scheduler;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Objects;
 import java.util.Scanner;
 
 import static Main.Constants.*;
@@ -51,11 +52,11 @@ public class Process {
             }
 
             for (int i = 0; i < Constants.NUMBER_OF_INSTRUCTIONS; i++) {
-                mem.storeWord(startMemAddress + i, "I" + i, reader.nextLine());
                 if (!reader.hasNextLine()) {
-                    mem.storeWord(startMemAddress + i + 1, "Halt", "");
+                    mem.storeWord(startMemAddress + i, "I"+i, "Halt");
                     break;
                 }
+                mem.storeWord(startMemAddress + i, "I" + i, reader.nextLine());
             }
             reader.close();
         } catch (Exception ignored) {
@@ -84,7 +85,7 @@ public class Process {
     }
 
     public void setState(State state) {
-        System.out.println("Process | " + this.getId() + " state changed to " + state);
+        System.out.println("Process | State changed to "+ state +" for Process: " + this.getId());
         mem.storeWord(this.lowerBound + STATE_OFFSET, "state", state);
     }
 
@@ -102,10 +103,11 @@ public class Process {
 
     public int incrementPC() {
         int newPC = (Integer) (getPC() + 1);
-        if(newPC == NUMBER_OF_INSTRUCTIONS){
+        if(newPC == NUMBER_OF_INSTRUCTIONS+ lowerBound + 7){
             this.numberOfOffsets++;
-            newPC = 0;
+            newPC = lowerBound+7;
             this.loadInstructions(lowerBound + 7, NUMBER_OF_INSTRUCTIONS*this.numberOfOffsets);
+            System.out.println(mem);
         }
         mem.storeWord(lowerBound + PC_OFFSET, "PC", newPC);
         return newPC;
@@ -116,10 +118,15 @@ public class Process {
         scheduler.addNewProcess(p);
     }
 
-    public void execute(){
+    public int execute(){
         int pc = this.getPC();
+        boolean isHalt = Objects.equals((String) mem.getValueAt(pc), "Halt");
         Parser.parse((String) mem.getValueAt(pc),this);
-        this.incrementPC();
+        if(!isHalt){
+            this.incrementPC();
+            return 0;
+        }
+        return 1;
     }
 
     public static int getTotalNumberOfInstruction(String path) {
@@ -137,9 +144,8 @@ public class Process {
     }
 
     public void freeMemory() {
-        int tmpBound = this.lowerBound;
         for (int i = 0; i < PROCESS_SPACE; i++)
-            mem.freeWord(tmpBound + i);
+            mem.freeWord(this.lowerBound + i);
     }
 
     public String getVariable(String s) {
@@ -151,8 +157,8 @@ public class Process {
         return this.getId()+"";
     }
 
-    public void setVariable(String s, int parseInt) {
-        mem.storeWord(this.lowerBound+4+this.numberOfVariables,s,parseInt);
+    public void setVariable(String s, Object o) {
+        mem.storeWord(this.lowerBound+4+this.numberOfVariables,s,o);
         this.numberOfVariables++;
         System.out.println(mem);
     }

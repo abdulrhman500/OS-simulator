@@ -19,9 +19,9 @@ public class Memory {
     }
 
     public String getVariableByName(String wantedName,int start) {
-        for (int i = start; i < 3; i++) {
+        for (int i = start; i < start + 3; i++) {
             if (memory[i].getName().equals(wantedName))
-                return (String)memory[i].getValue();
+                return memory[i].getValue()+"";
         }
         return null;
     }

@@ -35,9 +35,6 @@ public class Scheduler {
 
     private static final ArrayList<Arrival> arrivals = new ArrayList<Arrival>();
 
-    static int maxArrivalTime = Integer.MIN_VALUE;
-    static boolean isDeadLock = false;
-
     public void addNewProcess(Process process) {
         process.setState(State.Ready);
         readyQueue.add(process);
@@ -52,11 +49,8 @@ public class Scheduler {
         return instance;
     }
 
-    public void addProgram(int time, String path) {
-        if (time > maxArrivalTime)
-            maxArrivalTime = time;
-
-        arrivals.add(new Arrival(time, path));
+    public void addProgram(int time,String path){
+        arrivals.add(new Arrival(time,path));
     }
 
 
@@ -65,7 +59,6 @@ public class Scheduler {
         System.out.println("Scheduler| Preempted Process: " + process.getId());
         process.setState(State.Ready);
         readyQueue.add(process);
-
         System.out.println("Scheduler| Ready Queue Updated: " + readyQueue.toString());
         runningProcess =null;
         remainingInstruction = NUMBER_OF_INSTRUCTIONS_PER_TIME_SLICE;
@@ -81,19 +74,18 @@ public class Scheduler {
 
     public int updateClock() {
         for (Arrival tmp : arrivals) {
-            if (tmp.getArrivedAt() == clock) {
+            if (tmp.getArrivedAt() == clock){
                 Process.createProccess(tmp.getProgramPath());
             }
         }
 
-        if (runningProcess == null) {
+        if(runningProcess == null){
             runNextProcess();
-
         }else{
             System.out.println("Scheduler| Running  Process: " + runningProcess.getId());
             runningProcess.execute();
             remainingInstruction--;
-            if (remainingInstruction == 0) {
+            if(remainingInstruction==0){
                 processTimeUp(runningProcess);
             }
         }
@@ -105,16 +97,18 @@ public class Scheduler {
         return clock;
     }
 
-    public static void runNextProcess() {
+    public static void runNextProcess(){
         runningProcess = readyQueue.poll();
 
 
         if (runningProcess == null) {
             if (arrivals.size() == finishedQueue.size()) {
                 System.out.println("ALL Processes are Done");
-            } else {
-                if (getClock() > getInstance().maxArrivalTime)
-                    isDeadLock = true;
+            }else {
+                // How to deal with blocked
+                //DEADLOCK
+                //TODO handle the case when it's not a deadlock only a late process arrival
+                System.out.println("No READY process exists , DeadLock happened");
             }
         } else {
             System.out.println("Scheduler| Running  Process: " + runningProcess.getId());
@@ -127,15 +121,10 @@ public class Scheduler {
 
     public void simulate() {
         while (finishedQueue.size() != 3) {
-            if(isDeadLock)
-                break;
             System.out.println("Scheduler| Clock Cycle: " + getClock()+ " started");
             updateClock();
         }
-        if (isDeadLock)
-            System.out.println("No More Ready Process Exists. DeadLock Happened");
-        else
-            System.out.println("Finished All Programs");
+        System.out.println("Finished All Programs");
     }
 
     public void blockProcess(Process process, Mutexes resourceBlockedOn) {
