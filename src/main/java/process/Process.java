@@ -14,16 +14,13 @@ import static Main.Constants.*;
 
 public class Process {
     int lowerBound;
-//    int maxBound;
-    // the offset of the last element of the process in the memory will be used check boundaries for updating pc and to free process from memory
+    int numberOfOffsets;
 
     static Memory mem = Memory.getInstance();
     static Scheduler scheduler = Scheduler.getInstance();
-//    private int totalNumberOfInstruction = Process.getTotalNumberOfInstruction(this.getCodeLocation());
 
-    //PCB
-    //Memory boundaries
     public Process() {
+        this.numberOfOffsets=0;
         this.lowerBound = mem.getLowerBound(PROCESS_COUNT);
 
         mem.storeWord(lowerBound + ID_OFFSET, "ID", Constants.PROCESS_COUNT++);
@@ -36,13 +33,13 @@ public class Process {
 
     }
 
-    private void loadInstructions(int startMemAddress, int line) {
+    private void loadInstructions(int startMemAddress, int lineOffset) {
         try {
             File myObj = new File(this.getCodeLocation());
             Scanner reader = new Scanner(myObj);
 
             //skipping already loaded instructions
-            for (int i = 0; i < line; i++) {
+            for (int i = 0; i < lineOffset; i++) {
                 reader.nextLine();
             }
 
@@ -96,8 +93,12 @@ public class Process {
     }
 
     public int incrementPC() {
-        //TODO handle when the PC reaches the end of loaded instructions
         int newPC = (Integer) (getPC() + 1);
+        if(newPC == NUMBER_OF_INSTRUCTIONS){
+            this.numberOfOffsets++;
+            newPC = 0;
+            this.loadInstructions(lowerBound + 7, NUMBER_OF_INSTRUCTIONS*this.numberOfOffsets);
+        }
         mem.storeWord(lowerBound + PC_OFFSET, "PC", newPC);
         return newPC;
     }

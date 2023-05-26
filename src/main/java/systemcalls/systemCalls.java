@@ -30,7 +30,11 @@ public class systemCalls {
 
     public static String readFile(String filePath) throws FileNotFoundException {
         Scanner sc = new Scanner(new FileReader(new File(filePath)));
-        return sc.nextLine(); //TODO return the string not the scanner
+        StringBuilder sb =new StringBuilder();
+        while (sc.hasNextLine()){
+            sb.append(sc.nextLine());
+        }
+        return sb.toString()
     }
 
     public static void printFromTo(int x,int y){
