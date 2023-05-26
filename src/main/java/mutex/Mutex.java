@@ -2,6 +2,7 @@ package mutex;
 
 import exceptions.InvalidResourceException;
 import process.Process;
+import process.State;
 import scheduler.Scheduler;
 
 public class Mutex {
@@ -14,45 +15,55 @@ public class Mutex {
     static Integer screenOutputMutexProcessID;
 
 
-    public static void semWait(Process process, Mutexes resourceRequired) throws InvalidResourceException {
-        switch (resourceRequired){
-            case FILE :{
-                if(!fileMutexLocked){
+    public static boolean semWait(Process process, Mutexes resourceRequired) throws InvalidResourceException {
+        boolean gotLockSuccessfully = true;
+        switch (resourceRequired) {
+            case FILE: {
+                if (!fileMutexLocked) {
                     //The File Resource is Available
                     fileMutexLocked = true;
                     fileMutexOwnerProcessID = process.getId();
-                }
-                else{
+                } else {
                     //The File Resource is not Available
                     Scheduler.blockedOnFile.add(process);
+                    process.setState(State.Blocked);
+                    gotLockSuccessfully = false;
                 }
-            };break;
-            case USERINPUT:{
-                if(!userInputMutexLocked){
+            }
+            ;
+            break;
+            case USERINPUT: {
+                if (!userInputMutexLocked) {
                     //The UserInput Resource is Available.
                     userInputMutexLocked = true;
                     userInputMutexOwnerProcessID = process.getId();
-                }
-                else{
+                } else {
                     //The UserInput Resource is not Available.
                     Scheduler.blockedOnUserInput.add(process);
+                    process.setState(State.Blocked);
+                    gotLockSuccessfully = false;
                 }
-            };break;
-            case SCREENOUTPUT:{
-                if(!screenOutputMutexLocked){
+            }
+            ;
+            break;
+            case SCREENOUTPUT: {
+                if (!screenOutputMutexLocked) {
                     //The ScreenInput Resource is Available.
                     screenOutputMutexLocked = true;
                     screenOutputMutexProcessID = process.getId();
-                }
-                else{
+                } else {
                     //The ScreenOutput Resource is not Available.
                     Scheduler.getBlockedScreenOutput.add(process);
+                    process.setState(State.Blocked);
+                    gotLockSuccessfully = false;
                 }
-            }break;
-            default:throw new InvalidResourceException();
+            }
+            break;
+            default:
+                throw new InvalidResourceException();
         }
 
-
+        return gotLockSuccessfully;
     }
 
     public static void semSignal(Process process, Mutexes resourceReleased) throws InvalidResourceException {
