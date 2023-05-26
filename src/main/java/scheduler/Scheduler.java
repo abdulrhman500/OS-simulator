@@ -24,7 +24,8 @@ public class Scheduler {
     public static Queue<Process> finishedQueue = new LinkedList<Process>();
 
     public static Process runningProcess;
-
+    static boolean isDeadLock = false;
+    static int maxArrivalTime = Integer.MIN_VALUE;
     static Hashtable<Integer, ProcessInfo> processInfoTable = new Hashtable<>();
     private static final Scheduler instance = new Scheduler();
 
@@ -105,8 +106,8 @@ public class Scheduler {
             if (arrivals.size() == finishedQueue.size()) {
                 System.out.println("ALL Processes are Done");
             }else {
-                // How to deal with blocked
-                //DEADLOCK
+                if (getClock() > getInstance().maxArrivalTime)
+                    isDeadLock = true;
                 //TODO handle the case when it's not a deadlock only a late process arrival
                 System.out.println("No READY process exists , DeadLock happened");
             }
@@ -121,6 +122,8 @@ public class Scheduler {
 
     public void simulate() {
         while (finishedQueue.size() != 3) {
+            if(isDeadLock)
+                break;
             System.out.println("Scheduler| Clock Cycle: " + getClock()+ " started");
             updateClock();
         }
