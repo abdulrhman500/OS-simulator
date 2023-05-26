@@ -65,11 +65,11 @@ public class Scheduler {
     }
 
     public void killProcess(Process process) {
-
-        process.freeMemory();
         process.setState(State.Finished);
+        process.freeMemory();
         finishedQueue.add(process);
-        runNextProcess();
+        runningProcess=null;
+        //TODO print Finished Queue
     }
 
     public int updateClock() {
@@ -83,9 +83,9 @@ public class Scheduler {
             runNextProcess();
         }else{
             System.out.println("Scheduler| Running  Process: " + runningProcess.getId());
-            runningProcess.execute();
+            int halt = runningProcess.execute();
             remainingInstruction--;
-            if(remainingInstruction==0){
+            if(remainingInstruction==0 && halt!=1){
                 processTimeUp(runningProcess);
             }
         }
@@ -128,6 +128,7 @@ public class Scheduler {
     }
 
     public void blockProcess(Process process, Mutexes resourceBlockedOn) {
+        //TODO print queues
         System.out.println("Scheduler| Blocked Process: " + process.getId()+ " on resource: " + resourceBlockedOn);
         switch (resourceBlockedOn){
             case FILE -> blockedOnFile.add(process);

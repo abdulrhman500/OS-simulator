@@ -10,9 +10,9 @@ public class Mutex {
     static boolean userInputMutexLocked = false;
     static boolean screenOutputMutexLocked = false;
 
-    static Integer fileMutexOwnerProcessID;
-    static Integer userInputMutexOwnerProcessID;
-    static Integer screenOutputMutexProcessID;
+    public static Integer fileMutexOwnerProcessID;
+    public static Integer userInputMutexOwnerProcessID;
+    public static Integer screenOutputMutexProcessID;
 
     private static final Scheduler scheduler = Scheduler.getInstance();
 
@@ -50,7 +50,6 @@ public class Mutex {
             }
             case SCREENOUTPUT -> {
                 if (!screenOutputMutexLocked) {
-                    System.out.println("Mutex| resource unavailable Blocking Process "+ process.getId());
                     screenOutputMutexLocked = true;
                     screenOutputMutexProcessID = process.getId();
                 } else {
@@ -71,9 +70,9 @@ public class Mutex {
         switch (resourceReleased) {
             case FILE -> {
                 {
-                    //TODO handle this in the scheduler class not here
                     if (!fileMutexLocked || process.getId() != fileMutexOwnerProcessID) return;
 
+                    System.out.println("Mutex| resource File release By Process "+ process.getId());
                     if (Scheduler.blockedOnFile.isEmpty()) {
                         fileMutexOwnerProcessID = null;
                         fileMutexLocked = false;
@@ -88,6 +87,7 @@ public class Mutex {
                 {
                     if (!userInputMutexLocked || process.getId() != userInputMutexOwnerProcessID) return;
 
+                    System.out.println("Mutex| resource User Input release By Process "+ process.getId());
                     if (Scheduler.blockedOnUserInput.isEmpty()) {
                         userInputMutexOwnerProcessID = null;
                         userInputMutexLocked = false;
@@ -101,6 +101,7 @@ public class Mutex {
             case SCREENOUTPUT -> {
                 if (!screenOutputMutexLocked || process.getId() != screenOutputMutexProcessID) return;
 
+                System.out.println("Mutex| resource Screen Output release By Process "+ process.getId());
                 if (Scheduler.blockedOnUserInput.isEmpty()) {
                     screenOutputMutexProcessID = null;
                     screenOutputMutexLocked = false;
