@@ -46,6 +46,7 @@ public class Scheduler {
         readyQueue.add(process);
         System.out.println("Scheduler| added New Process with ID : " + process.getId());
         System.out.println("Scheduler| Ready Queue Updated: " + readyQueue.toString());
+        Scheduler.printQueues();
     }
 
     private Scheduler() {
@@ -70,6 +71,7 @@ public class Scheduler {
         System.out.println("Scheduler| Ready Queue Updated: " + readyQueue.toString());
         runningProcess =null;
         remainingInstruction = NUMBER_OF_INSTRUCTIONS_PER_TIME_SLICE;
+        Scheduler.printQueues();
     }
 
     public void killProcess(Process process) {
@@ -78,6 +80,7 @@ public class Scheduler {
         process.setState(State.Finished);
         finishedQueue.add(process);
         runNextProcess();
+        Scheduler.printQueues();
     }
 
     public int updateClock() {
@@ -125,6 +128,7 @@ public class Scheduler {
             runningProcess.execute();
             remainingInstruction--;
         }
+        Scheduler.printQueues();
     }
 
     public void simulate() {
@@ -148,5 +152,13 @@ public class Scheduler {
             case SCREENOUTPUT -> blockedOnScreenOutput.add(process);
         }
         runningProcess =null;
+    }
+
+    public static void printQueues(){
+        System.out.println("Ready Queue: "+ Scheduler.readyQueue.toString());
+        System.out.println("Processes blocked on File Read/Write: "+ Scheduler.blockedOnFile.toString());
+        System.out.println("Processes blocked on User Input: "+ Scheduler.blockedOnUserInput.toString());
+        System.out.println("Processes blocked on Screen Output: "+ Scheduler.blockedOnScreenOutput.toString());
+
     }
 }

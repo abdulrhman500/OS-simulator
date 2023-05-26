@@ -62,6 +62,7 @@ public class Mutex {
             default -> throw new InvalidResourceException();
         }
         printMutexTable();
+        Scheduler.printQueues();
         return gotLockSuccessfully;
     }
 
@@ -114,6 +115,7 @@ public class Mutex {
             default -> throw new InvalidResourceException();
         }
         printMutexTable();
+        Scheduler.printQueues();
     }
 
     public static void printMutexTable(){
