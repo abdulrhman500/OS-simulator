@@ -105,9 +105,6 @@ public class Scheduler {
             }
         }
         clock++;
-        if(clock==18){
-            System.out.println("here");
-        }
         return clock;
     }
 
@@ -146,6 +143,7 @@ public class Scheduler {
             }
             System.out.println("Scheduler| Clock Cycle: " + getClock()+ " started");
             updateClock();
+            System.out.println(Memory.getInstance());
         }
         if (isDeadLock) {
             System.out.println("No More Ready Process Exists. DeadLock Happened");
