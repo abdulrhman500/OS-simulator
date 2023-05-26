@@ -21,6 +21,7 @@ public class Memory {
 
     public String getVariableByName(String wantedName,int start) {
         for (int i = start; i < start + 3; i++) {
+            System.out.println("qqq"+this);
             if (memory[i].getName().equals(wantedName))
                 return memory[i].getValue()+"";
         }
@@ -101,8 +102,9 @@ public class Memory {
 
 
     public int getLowerBound(int processId) {
-
-        Integer old = (Integer) memory[processId - 1].getValue();
+        Integer old = null;
+        if(memory[processId - 1] != null )
+         old =  (Integer) memory[processId - 1].getValue();
         if (old != null && old != -1) return old;
 
         int bound = -1;

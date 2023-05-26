@@ -74,9 +74,12 @@ public class Scheduler {
 
     public void killProcess(Process process) {
 
-        process.freeMemory();
         process.setState(State.Finished);
         finishedQueue.add(process);
+            if(readyQueue.contains(process))
+                readyQueue.remove(process);
+
+        process.freeMemory();
         runNextProcess();
     }
 
@@ -91,9 +94,10 @@ public class Scheduler {
             runNextProcess();
         }else{
             System.out.println("Scheduler| Running  Process: " + runningProcess.getId());
-            runningProcess.execute();
+            System.out.println("<<<<<<<<<<<<<<<<<<<<<<<<< runing process  = "+runningProcess);
+           int halt = runningProcess.execute();
             remainingInstruction--;
-            if(remainingInstruction==0){
+            if(remainingInstruction==0 && halt!=1){
                 processTimeUp(runningProcess);
             }
         }
@@ -124,11 +128,12 @@ public class Scheduler {
             remainingInstruction = NUMBER_OF_INSTRUCTIONS_PER_TIME_SLICE;
             runningProcess.execute();
             remainingInstruction--;
+
         }
     }
 
     public void simulate() {
-        while (finishedQueue.size() != 3) {
+        while (finishedQueue.size() != arrivals.size()) {
             if(isDeadLock)
                 break;
             System.out.println("Scheduler| Clock Cycle: " + getClock()+ " started");

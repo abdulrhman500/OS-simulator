@@ -63,7 +63,6 @@ public class Parser {
 
     private static void checkPrint(Process p) {
         if(Mutex.screenOutputMutexProcessID !=p.getId()){
-            //TODO check if we should block the process instead
             System.err.println("error Invalid Program Code");
         }
     }
