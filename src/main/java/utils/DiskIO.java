@@ -26,7 +26,7 @@ public class DiskIO {
     Hashtable<Integer, Process> stringProcessHashtable = new Hashtable<>();
 
     public void storeToDisk(Process process) throws IOException {
-        String fileName = getProcessName(process.getId());
+        String fileName = getProcessFileName(process.getId());
         File processFile = new File(fileName);
         if (!processFile.exists()) {
             processFile.createNewFile();
@@ -43,13 +43,11 @@ public class DiskIO {
         fileWriter.close();
         process.setLowerBound(-1);
         stringProcessHashtable.put(process.getId(), process);
-
-
     }
 
     public Process loadFromDisk(int processID) {
 
-        String fileName = getProcessName(processID);
+        String fileName = getProcessFileName(processID);
 
         File processFile = new File(fileName);
 
@@ -88,17 +86,13 @@ public class DiskIO {
                 processFile.delete();
             }
         }
-
-
     }
-
     private int getLowerBoundOf(int processID) {
 
         return 0;
     }
 
-    public String getProcessName(int processID) {
+    public String getProcessFileName(int processID) {
         return DISK_PATH + "/" + processID + ".txt";
     }
-
 }
