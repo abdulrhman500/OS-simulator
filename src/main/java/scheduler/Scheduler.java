@@ -2,78 +2,95 @@ package scheduler;
 
 import Main.Arrival;
 import Main.Constants;
-import cpu.CPU;
-import memory.Memory;
+import exceptions.InvalidResourceException;
+import mutex.Mutexes;
 import process.Process;
 import process.ProcessInfo;
 import process.State;
-import utils.DiskIO;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.Queue;
 
+import static Main.Constants.NUMBER_OF_INSTRUCTIONS_PER_TIME_SLICE;
+
 public class Scheduler {
     public static Queue<Process> blockedOnFile = new LinkedList<Process>();
     public static Queue<Process> blockedOnUserInput = new LinkedList<Process>();
-    public static Queue<Process> getBlockedScreenOutput = new LinkedList<Process>();
+    public static Queue<Process> blockedOnScreenOutput = new LinkedList<Process>();
 
     public static Queue<Process> readyQueue = new LinkedList<Process>();
 
     public static Queue<Process> finishedQueue = new LinkedList<Process>();
 
     public static Process runningProcess;
-
+    static boolean isDeadLock = false;
+    static int maxArrivalTime = Integer.MIN_VALUE;
     static Hashtable<Integer, ProcessInfo> processInfoTable = new Hashtable<>();
-    private static CPU cpu = CPU.getInstance();
-    private static Scheduler instance = new Scheduler();
+    private static final Scheduler instance = new Scheduler();
+
+    private static int remainingInstruction = NUMBER_OF_INSTRUCTIONS_PER_TIME_SLICE;
+
 
     private static int clock = 0;
-//    static int currentProcessTimer = 0;
 
-    public static ArrayList<Arrival> arrivals = new ArrayList<Arrival>();
+    private static final ArrayList<Arrival> arrivals = new ArrayList<Arrival>();
 
     public void addNewProcess(Process process) {
         process.setState(State.Ready);
         readyQueue.add(process);
-//        processInfoTable.put(process.getId(), pInfo);
+        System.out.println("Scheduler| added New Process with ID : " + process.getId());
+        System.out.println("Scheduler| Ready Queue Updated: " + readyQueue.toString());
     }
 
     private Scheduler() {
-
     }
 
     public static Scheduler getInstance() {
         return instance;
     }
 
+    public void addProgram(int time,String path){
+        arrivals.add(new Arrival(time,path));
+    }
+
 
     public void processTimeUp(Process process) {
-
-        ProcessInfo curr = processInfoTable.get(process.getId());
-        curr.setExecutedInstructions(curr.getExecutedInstructions() - Constants.NUMBER_OF_INSTRUCTIONS_PER_TIME_SLICE);
-        processInfoTable.put(process.getId(), curr);
+        System.out.println("Scheduler| time up for Process: " + process.getId());
+        System.out.println("Scheduler| Preempted Process: " + process.getId());
         process.setState(State.Ready);
         readyQueue.add(process);
-        runNextProcess();
-
+        System.out.println("Scheduler| Ready Queue Updated: " + readyQueue.toString());
+        runningProcess =null;
+        remainingInstruction = NUMBER_OF_INSTRUCTIONS_PER_TIME_SLICE;
     }
 
     public void killProcess(Process process) {
-
-        process.freeMemory();
         process.setState(State.Finished);
+        process.freeMemory();
         finishedQueue.add(process);
-        runNextProcess();
+        runningProcess=null;
+        //TODO print Finished Queue
     }
 
     public int updateClock() {
-
-        ++clock;
         for (Arrival tmp : arrivals) {
-            if (tmp.getArrivedAt() == clock) ;
-//                loadProgram(tmp.getProgramPath());
+            if (tmp.getArrivedAt() == clock){
+                Process.createProccess(tmp.getProgramPath());
+            }
         }
+
+        if(runningProcess == null){
+            runNextProcess();
+        }else{
+            System.out.println("Scheduler| Running  Process: " + runningProcess.getId());
+            int halt = runningProcess.execute();
+            remainingInstruction--;
+            if(remainingInstruction==0 && halt!=1){
+                processTimeUp(runningProcess);
+            }
+        }
+        clock++;
         return clock;
     }
 
@@ -81,27 +98,46 @@ public class Scheduler {
         return clock;
     }
 
-    public static void runNextProcess() {
+    public static void runNextProcess(){
         runningProcess = readyQueue.poll();
 
+
         if (runningProcess == null) {
-            if (arrivals.size() == finishedQueue.size())
+            if (arrivals.size() == finishedQueue.size()) {
                 System.out.println("ALL Processes are Done");
-            else {
-                // How to deal with blocked
-                //DEADLOCK
+            }else {
+                if (getClock() > getInstance().maxArrivalTime)
+                    isDeadLock = true;
+                //TODO handle the case when it's not a deadlock only a late process arrival
                 System.out.println("No READY process exists , DeadLock happened");
             }
-
         } else {
+            System.out.println("Scheduler| Running  Process: " + runningProcess.getId());
             runningProcess.setState(State.Running);
-
-
-            cpu.setExecutingProcess(runningProcess);
-
-            cpu.executeProcess();
-
+            remainingInstruction = NUMBER_OF_INSTRUCTIONS_PER_TIME_SLICE;
+            runningProcess.execute();
+            remainingInstruction--;
         }
     }
 
+    public void simulate() {
+        while (finishedQueue.size() != 3) {
+            if(isDeadLock)
+                break;
+            System.out.println("Scheduler| Clock Cycle: " + getClock()+ " started");
+            updateClock();
+        }
+        System.out.println("Finished All Programs");
+    }
+
+    public void blockProcess(Process process, Mutexes resourceBlockedOn) {
+        //TODO print queues
+        System.out.println("Scheduler| Blocked Process: " + process.getId()+ " on resource: " + resourceBlockedOn);
+        switch (resourceBlockedOn){
+            case FILE -> blockedOnFile.add(process);
+            case USERINPUT -> blockedOnUserInput.add(process);
+            case SCREENOUTPUT -> blockedOnScreenOutput.add(process);
+        }
+        runningProcess =null;
+    }
 }

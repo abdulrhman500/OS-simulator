@@ -18,12 +18,12 @@ public class Memory {
         return instance;
     }
 
-    public int searchForWord(String wantedName) {
-        for (int i = 0; i < memory.length; i++) {
+    public String getVariableByName(String wantedName,int start) {
+        for (int i = start; i < start + 3; i++) {
             if (memory[i].getName().equals(wantedName))
-                return i;
+                return memory[i].getValue()+"";
         }
-        return -1;
+        return null;
     }
 
     public Object getValueAt(int address){
@@ -51,17 +51,19 @@ public class Memory {
          */
 
         if(37/ Constants.PROCESS_SPACE >= 3){
-            numberOfProcessesInMemory++;
             if(numberOfProcessesInMemory == 0){
                 memory[0] =new MemoryWord("P1 lower bound", 3);
+                numberOfProcessesInMemory++;
                 return 3;
             }
             if(numberOfProcessesInMemory == 1){
                 memory[1] =new MemoryWord("P2 lower bound", 3+Constants.PROCESS_SPACE);
+                numberOfProcessesInMemory++;
                 return 3+Constants.PROCESS_SPACE;
             }
             if(numberOfProcessesInMemory == 2){
                 memory[2] =new MemoryWord("P3 lower bound", 3+2*Constants.PROCESS_SPACE);
+                numberOfProcessesInMemory++;
                 return 3+2*Constants.PROCESS_SPACE;
             }
         }
@@ -94,22 +96,7 @@ public class Memory {
         }
     }
 
-    private int storeP1(){
-        memory[0] =new MemoryWord("P1 lower bound", 3);
-        return 3;
-    }
 
-    private int storeP2(){
-        if(37/ Constants.PROCESS_SPACE >= 2){
-            memory[1] =new MemoryWord("P2 lower bound", 3+Constants.PROCESS_SPACE);
-            return 3+Constants.PROCESS_SPACE;
-        }else{
-            //TODO store process 1 to disk and set it's pointer to -1
-            storeP1();
-            memory[1] =new MemoryWord("P2 lower bound", 3);
-            return 3;
-        }
-    }
 
 
     public MemoryWord[] getMemory() {
@@ -119,9 +106,13 @@ public class Memory {
     @Override
     public String toString() {
         StringBuilder sb =new StringBuilder();
+        sb.append("=======> Memory: <=======\n");
         for(int i=0;i<40;i++){
-            sb.append(i).append(" ").append(memory[i].toString()).append("\n");
+            if(memory[i] != null) {
+                sb.append(i).append(" ").append(memory[i].toString()).append("\n");
+            }
         }
+        sb.append("------------------");
         return sb.toString();
     }
 }

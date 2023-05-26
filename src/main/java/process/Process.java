@@ -1,58 +1,61 @@
 package process;
 
 import Main.Constants;
+import exceptions.InvalidResourceException;
 import memory.Memory;
+import parser.Parser;
 import scheduler.Scheduler;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.Objects;
 import java.util.Scanner;
 
 import static Main.Constants.*;
 
 public class Process {
     int lowerBound;
-//    int maxBound;
-    // the offset of the last element of the process in the memory will be used check boundaries for updating pc and to free process from memory
+    int numberOfOffsets;
+    int numberOfVariables;
 
     static Memory mem = Memory.getInstance();
     static Scheduler scheduler = Scheduler.getInstance();
-//    private int totalNumberOfInstruction = Process.getTotalNumberOfInstruction(this.getCodeLocation());
 
-    //PCB
-    //Memory boundaries
     public Process() {
+        this.numberOfOffsets=0;
+        this.numberOfVariables=0;
         this.lowerBound = mem.getLowerBound(PROCESS_COUNT);
 
         mem.storeWord(lowerBound + ID_OFFSET, "ID", Constants.PROCESS_COUNT++);
         mem.storeWord(lowerBound + STATE_OFFSET, "state", State.Ready);
-        mem.storeWord(lowerBound + PC_OFFSET, "PC", 0);
+        mem.storeWord(lowerBound + PC_OFFSET, "PC", (lowerBound+7));
         mem.storeWord(lowerBound + LOWER_BOUND_OFFSET, "lower-bound", lowerBound);
 
 
         this.loadInstructions(lowerBound + 7, 0);
-
+        System.out.println(mem);
     }
 
-    private void loadInstructions(int startMemAddress, int line) {
+    private void loadInstructions(int startMemAddress, int lineOffset) {
         try {
-            File myObj = new File("src/main/resources/programs/" + this.getCodeLocation());
+            File myObj = new File(this.getCodeLocation());
             Scanner reader = new Scanner(myObj);
 
             //skipping already loaded instructions
-            for (int i = 0; i < line; i++) {
+            for (int i = 0; i < lineOffset; i++) {
                 reader.nextLine();
             }
-//what if there is no enough space for the  NUMBER_OF_INSTRUCTIONS ?
+
             for (int i = 0; i < Constants.NUMBER_OF_INSTRUCTIONS; i++) {
-                mem.storeWord(startMemAddress + i, "I" + i, reader.nextLine());
                 if (!reader.hasNextLine()) {
-                    mem.storeWord(startMemAddress + i + 1, "Halt", "");
+                    mem.storeWord(startMemAddress + i, "I"+i, "Halt");
                     break;
                 }
+                mem.storeWord(startMemAddress + i, "I" + i, reader.nextLine());
             }
             reader.close();
         } catch (Exception ignored) {
+            System.out.println("Problem reading file");
         }
     }
 
@@ -77,6 +80,7 @@ public class Process {
     }
 
     public void setState(State state) {
+        System.out.println("Process | State changed to "+ state +" for Process: " + this.getId());
         mem.storeWord(this.lowerBound + STATE_OFFSET, "state", state);
     }
 
@@ -92,10 +96,14 @@ public class Process {
         return (Integer) mem.loadWord(lowerBound + PC_OFFSET).getValue();
     }
 
-    public int updatePC() {
-        // what if pc +1 is out of the allocated memory of the process;
-        //TODO handle when the PC reaches the end of loaded instructions
+    public int incrementPC() {
         int newPC = (Integer) (getPC() + 1);
+        if(newPC == NUMBER_OF_INSTRUCTIONS+ lowerBound + 7){
+            this.numberOfOffsets++;
+            newPC = lowerBound+7;
+            this.loadInstructions(lowerBound + 7, NUMBER_OF_INSTRUCTIONS*this.numberOfOffsets);
+            System.out.println(mem);
+        }
         mem.storeWord(lowerBound + PC_OFFSET, "PC", newPC);
         return newPC;
     }
@@ -105,6 +113,16 @@ public class Process {
         scheduler.addNewProcess(p);
     }
 
+    public int execute(){
+        int pc = this.getPC();
+        boolean isHalt = Objects.equals((String) mem.getValueAt(pc), "Halt");
+        Parser.parse((String) mem.getValueAt(pc),this);
+        if(!isHalt){
+            this.incrementPC();
+            return 0;
+        }
+        return 1;
+    }
 
     public static int getTotalNumberOfInstruction(String path) {
         int count = 0;
@@ -121,8 +139,22 @@ public class Process {
     }
 
     public void freeMemory() {
-        int tmpBound = this.lowerBound;
         for (int i = 0; i < PROCESS_SPACE; i++)
-            mem.freeWord(tmpBound + i);
+            mem.freeWord(this.lowerBound + i);
+    }
+
+    public String getVariable(String s) {
+        return mem.getVariableByName(s,this.lowerBound+4);
+    }
+
+    @Override
+    public String toString() {
+        return this.getId()+"";
+    }
+
+    public void setVariable(String s, Object o) {
+        mem.storeWord(this.lowerBound+4+this.numberOfVariables,s,o);
+        this.numberOfVariables++;
+        System.out.println(mem);
     }
 }
